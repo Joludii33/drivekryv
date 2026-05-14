@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveKRYV - Реєстрація</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-body">
+    <!-- Логотип у верхньому лівому куті -->
+    <div class="auth-header-logo">
+        <img src="icons/logo.png" alt="DriveKRYV Logo">
+    </div>
+    
+    <div class="auth-container">
+        <!-- Блок форми -->
+        <div class="auth-card">
+            <h1 class="auth-title">Реєстрація акаунта</h1>
+            
+            <form id="register-form">
+                <div class="auth-group">
+                    <label class="auth-label">ПІБ</label>
+                    <div class="auth-input-wrapper">
+                        
+                        <input type="text" id="name-input" class="auth-input" placeholder="Введіть дані" required>
+                        <img src="icons/user-icon.png" class="auth-input-icon" alt="User">
+                    </div>
+                </div>
+
+                <div class="auth-group">
+                    <label class="auth-label">Номер телефону</label>
+                    <div class="auth-input-wrapper">
+                        <!-- Базова HTML-перевірка довжини -->
+                        <input type="tel" id="phone-input" class="auth-input" placeholder="Введіть дані" minlength="10" maxlength="13" required>
+                        <img src="icons/phone-icon.png" class="auth-input-icon" alt="Phone">
+                    </div>
+                    <!-- Блок для виводу помилки -->
+                    <span id="phone-error" style="color: #ffcccc; font-size: 12px; display: none; margin-top: 5px; font-weight: 500;">Номер має містити від 10 до 13 символів</span>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Кнопка підтвердження (за макетом винесена за межі блоку) -->
+        <button type="submit" form="register-form" class="btn-confirm">Підтвердити</button>
+    </div>
+
+    <!-- Скрипт для точної перевірки довжини номера при сабміті -->
+<script>
+        const form = document.getElementById('register-form');
+        const phoneInput = document.getElementById('phone-input');
+        const nameInput = document.getElementById('name-input'); 
+        const phoneError = document.getElementById('phone-error');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault(); 
+            
+            const phoneVal = phoneInput.value.replace(/[^\d+]/g, '');
+            
+            if (phoneVal.length < 10 || phoneVal.length > 13) {
+                phoneError.style.display = 'block';
+                phoneInput.style.borderColor = 'red';
+            } else {
+                phoneError.style.display = 'none';
+                phoneInput.style.borderColor = 'var(--text-main)';
+                
+                // 1. Зберігаємо ім'я
+                localStorage.setItem('userName', nameInput.value); 
+                
+                // 2. ВМИКАЄМО СТАТУС (Ось цей рядок, про який я казав)
+                localStorage.setItem('isLoggedIn', 'true');
+                
+                // Переходимо на сторінку для авторизованих
+                window.location.href = 'index-logged.html';
+            }
+        });
+    </script>
+</body>
+</html>

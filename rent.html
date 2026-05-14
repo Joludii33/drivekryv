@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформлення оренди - DriveKRYV</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Ідеальна сітка, яка не розтягує нижні блоки */
+        .rent-grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        /* Адаптивність для мобілок */
+        @media (max-width: 768px) {
+            .rent-grid-layout { grid-template-columns: 1fr; }
+            .grid-card-1 { grid-column: 1 !important; grid-row: 1 !important; }
+            .grid-card-2 { grid-column: 1 !important; grid-row: 2 !important; }
+            .grid-card-3 { grid-column: 1 !important; grid-row: 3 !important; }
+            .grid-card-4 { grid-column: 1 !important; grid-row: 4 !important; }
+        }
+        
+        /* Анімація модального вікна */
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        #btn-modal-ok:hover { opacity: 0.9; }
+    </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f7f6; overflow-y: auto !important; height: auto !important;">
+
+    <header style="display: flex; justify-content: flex-end; align-items: center; background-color: #51BBED; padding: 15px 40px; width: 100%; box-sizing: border-box; margin: 0;">
+        <button class="btn-back" onclick="window.history.back()" style="background: transparent; color: white; border: 1px solid white; padding: 8px 16px; border-radius: 20px; cursor: pointer;"> < Назад</button>
+    </header>
+
+    <main class="rent-page-container" style="padding: 40px; max-width: 1100px; margin: 0 auto;">
+        <h1 class="rent-main-title" style="text-align: center; margin-top: 0; margin-bottom: 30px;">Оформлення оренди авто</h1>
+
+        <div class="rent-grid-layout">
+            
+            <div class="rent-card grid-card-1" style="grid-column: 1; grid-row: 1; background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column;">
+                <h2 class="rent-card-title" style="margin-top: 0; margin-bottom: 20px;">1. Автомобіль та дата</h2>
+                
+                <div class="rent-car-preview" style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                    <img id="rent-car-image" src="" alt="" style="width: 140px; aspect-ratio: 4/3; object-fit: cover; border-radius: 12px; display: block; margin: 0;">
+                    <h3 id="rent-car-name" style="margin: 0; font-size: 22px; text-align: left; flex: 1;">Завантаження...</h3>
+                </div>
+
+                <div class="rent-dates" style="display: flex; gap: 15px; margin-top: auto;">
+                    <div class="rent-input-group" style="flex: 1;">
+                        <label style="display: block; font-size: 14px; margin-bottom: 5px;">Початок оренди</label>
+                        <input type="date" id="rent-start-date" class="rent-input" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+                    </div>
+                    <div class="rent-input-group" style="flex: 1;">
+                        <label style="display: block; font-size: 14px; margin-bottom: 5px;">Кінець оренди</label>
+                        <input type="date" id="rent-end-date" class="rent-input" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="rent-card grid-card-2" style="grid-column: 1; grid-row: 2; background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column;">
+                <h2 class="rent-card-title" style="margin-top: 0; margin-bottom: 20px;">2. Ваші дані</h2>
+                <div class="rent-input-group" style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 14px; margin-bottom: 5px;">ПІБ</label>
+                    <input type="text" id="rent-user-name" class="rent-input" placeholder="Введіть дані" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+                </div>
+                <div class="rent-input-group" style="margin-top: auto;">
+                    <label style="display: block; font-size: 14px; margin-bottom: 5px;">Номер телефону</label>
+                    <input type="tel" class="rent-input" placeholder="+380..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <div class="rent-card grid-card-3" style="grid-column: 2; grid-row: 1; background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column;">
+                <h2 class="rent-card-title" style="margin-top: 0; margin-bottom: 20px;">3. Логістика</h2>
+                <div class="rent-radio-group" style="margin-bottom: 15px; display: flex; gap: 20px;">
+                    <label><input type="radio" name="delivery" value="office" checked> В офісі</label>
+                    <label><input type="radio" name="delivery" value="address"> Доставка</label>
+                </div>
+                <div class="rent-input-group" style="margin-bottom: 15px;">
+                    <label style="display: block; font-size: 14px; margin-bottom: 5px;">Адреса або коментар</label>
+                    <input type="text" id="rent-comment" class="rent-input" placeholder="Введіть дані" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+                </div>
+                <div class="rent-input-group" style="margin-top: auto;">
+                    <label style="display: block; font-size: 14px; margin-bottom: 5px;">Коментар до оренди</label>
+                    <input type="text" class="rent-input" placeholder="Введіть дані" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+                </div>
+            </div>
+
+            <div class="rent-card grid-card-4" style="grid-column: 2; grid-row: 2; background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column;">
+                <h2 class="rent-card-title" style="margin-top: 0; margin-bottom: 20px;">4. Підтвердження</h2>
+                <div class="rent-summary" style="background: #f9f9f9; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                    <p id="rent-calc-text" style="margin: 5px 0; font-size: 14px;">Автомобіль x 1 день = 0 грн</p>
+                    <p style="margin: 5px 0; font-size: 14px;">Страхування = 100 грн</p>
+                    <p class="rent-total" id="rent-total-price" style="font-size: 20px; font-weight: 700; color: #51BBED; margin: 15px 0 0 0;">Разом: 0 грн</p>
+                </div>
+                <button id="btn-confirm-rent" style="width: 100%; background: #51BBED; color: white; border: none; padding: 15px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: auto;">Підтвердити замовлення</button>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="success-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: #fff; padding: 40px; border-radius: 24px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2); animation: popIn 0.3s ease-out;">
+            <h2 style="margin: 0 0 15px; font-size: 26px; color: #111;">Замовлення оформлено!</h2>
+            <p style="margin: 0 0 30px; font-size: 16px; color: #666; line-height: 1.5;">Ваша заявка успішно прийнята.</p>
+            <button id="btn-modal-ok" style="background: #51BBED; color: #fff; border: none; padding: 15px 30px; border-radius: 20px; font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; transition: opacity 0.2s;">Супер!</button>
+        </div>
+    </div>
+
+    <script src="cars.js"></script>
+    <script src="main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const carId = urlParams.get('id');
+            const car = carsData.find(c => c.id === carId);
+            
+            const startDateInput = document.getElementById('rent-start-date');
+            const endDateInput = document.getElementById('rent-end-date');
+            const confirmBtn = document.getElementById('btn-confirm-rent');
+
+            if (!car || !startDateInput || !endDateInput || !confirmBtn) return;
+
+            const today = new Date().toISOString().split('T')[0];
+            startDateInput.value = today;
+            startDateInput.min = today; 
+            
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            endDateInput.value = tomorrow.toISOString().split('T')[0];
+            endDateInput.min = today;
+
+            function calculatePrice() {
+                const start = new Date(startDateInput.value);
+                const end = new Date(endDateInput.value);
+                
+                const diffTime = end - start;
+                let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays < 1) diffDays = 1; 
+
+                const insurance = 100;
+                const carTotal = car.priceDay * diffDays;
+                const grandTotal = carTotal + insurance;
+
+                document.getElementById('rent-calc-text').textContent = `${car.brand} ${car.model} x ${diffDays} дн. = ${carTotal} грн`;
+                document.getElementById('rent-total-price').textContent = `Разом: ${grandTotal} грн`;
+                
+                return { diffDays, grandTotal };
+            }
+
+            startDateInput.addEventListener('change', calculatePrice);
+            endDateInput.addEventListener('change', calculatePrice);
+
+            document.getElementById('rent-car-name').textContent = `${car.brand} ${car.model}`;
+            document.getElementById('rent-car-image').src = car.imageMain;
+            
+            calculatePrice();
+
+            confirmBtn.addEventListener('click', () => {
+                const stats = calculatePrice();
+                
+                const addressInput = document.getElementById('rent-address');
+                const commentInput = document.getElementById('rent-comment');
+                const deliveryRadio = document.querySelector('input[name="delivery"]:checked');
+                const userNameInput = document.getElementById('rent-user-name');
+                
+                const rentalOrder = {
+                    id: Date.now(),
+                    carId: car.id,
+                    carName: `${car.brand} ${car.model}`,
+                    image: car.imageMain,
+                    date: startDateInput.value,
+                    endDate: endDateInput.value,
+                    days: stats.diffDays,
+                    total: stats.grandTotal,
+                    delivery: deliveryRadio ? deliveryRadio.value : 'office',
+                    address: addressInput ? addressInput.value : 'Не вказано',
+                    comment: commentInput ? commentInput.value : '',
+                    customerName: userNameInput ? userNameInput.value : 'Гість',
+                    status: 'Очікує підтвердження'
+                };
+
+                // Жорстко зберігаємо історію саме для гостя
+                let history = JSON.parse(localStorage.getItem('history_guest') || '[]');
+                history.unshift(rentalOrder);
+                localStorage.setItem('history_guest', JSON.stringify(history));
+
+                // Викликаємо красиву модалку
+                const modal = document.getElementById('success-modal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    document.getElementById('btn-modal-ok').onclick = () => {
+                        // Жорстко кидаємо на сторінку гостя, незалежно від кешу
+                        window.location.href = 'index.html';
+                    };
+                } else {
+                    window.location.href = 'index.html';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

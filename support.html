@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Підтримка - DriveKRYV</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="background-color: #f4f7f6; margin: 0; min-height: 100vh; display: flex; flex-direction: column;">
+    
+    <header style="display: flex; justify-content: space-between; align-items: center; background-color: #51BBED; padding: 15px 40px; width: 100%; box-sizing: border-box;">
+        <div style="display: flex; align-items: center;">
+            <a href="index-logged.html"><img src="icons/logo.png" alt="DriveKRYV Logo" style="height: 45px; width: auto; object-fit: contain;"></a>
+        </div>
+        <button class="btn-back" onclick="window.history.back()" style="background: transparent; color: white; border: 1px solid white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 500;"> < Назад</button>
+    </header>
+
+    <div style="padding: 40px; max-width: 1000px; margin: 0 auto; width: 100%; box-sizing: border-box; flex-grow: 1;">
+        <h1 style="margin-top: 0; margin-bottom: 30px; font-size: 28px; color: #333;">Служба підтримки</h1>
+        
+        <div style="display: flex; gap: 40px; flex-wrap: wrap;">
+            
+            <div style="flex: 1; min-width: 300px;">
+                <div style="background: #fff; border-radius: 20px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px;">
+                    <h2 style="font-size: 20px; margin-top: 0; margin-bottom: 20px; color: #000;">Напишіть нам</h2>
+                    <form id="support-form">
+                        <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 500; font-size: 14px;">Ваше ім'я</label>
+                        <input type="text" id="support-name" required style="width: 100%; padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 16px; box-sizing: border-box; font-size: 15px; font-family: inherit;">
+
+                        <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 500; font-size: 14px;">Email для відповіді</label>
+                        <input type="email" id="support-email" required style="width: 100%; padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 16px; box-sizing: border-box; font-size: 15px; font-family: inherit;">
+
+                        <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 500; font-size: 14px;">Повідомлення</label>
+                        <textarea id="support-message" required rows="4" style="width: 100%; padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; box-sizing: border-box; font-size: 15px; font-family: inherit; resize: vertical;"></textarea>
+
+                        <button type="submit" style="background-color: #51BBED; color: #fff; border: none; padding: 14px 24px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%;">Відправити повідомлення</button>
+                    </form>
+                </div>
+
+                <div style="background: #fff; border-radius: 20px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                    <h2 style="font-size: 18px; margin-top: 0; margin-bottom: 15px; color: #000;">Наші контакти</h2>
+                    <p style="margin: 0 0 10px 0; color: #555; font-size: 15px;">📍 м. Кривий Ріг, пл. 95 Квартал, 1</p>
+                    <p style="margin: 0 0 10px 0; color: #555; font-size: 15px;">📞 +38 (097) 123 45 67</p>
+                    <p style="margin: 0; color: #555; font-size: 15px;">✉️ support@drivekryv.com.ua</p>
+                </div>
+            </div>
+
+            <div style="flex: 1.2; min-width: 300px;">
+                <h2 style="font-size: 20px; margin-top: 0; margin-bottom: 20px; color: #000;">Часті запитання (FAQ)</h2>
+                
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <details style="background: #fff; border-radius: 12px; padding: 15px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer;">
+                        <summary style="font-weight: 600; font-size: 16px; color: #333; outline: none;">Які документи потрібні для оренди?</summary>
+                        <p style="margin: 15px 0 0 0; color: #666; font-size: 14px; line-height: 1.5;">Для оформлення оренди вам знадобиться паспорт громадянина України, ідентифікаційний код та дійсне водійське посвідчення. Стаж водіння має бути не менше 2 років.</p>
+                    </details>
+
+                    <details style="background: #fff; border-radius: 12px; padding: 15px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer;">
+                        <summary style="font-weight: 600; font-size: 16px; color: #333; outline: none;">Чи є обмеження по пробігу?</summary>
+                        <p style="margin: 15px 0 0 0; color: #666; font-size: 14px; line-height: 1.5;">Так, стандартний ліміт пробігу становить 300 км на добу. Кожен наступний кілометр оплачується додатково згідно з тарифами обраного автомобіля.</p>
+                    </details>
+
+                    <details style="background: #fff; border-radius: 12px; padding: 15px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer;">
+                        <summary style="font-weight: 600; font-size: 16px; color: #333; outline: none;">Що робити у випадку ДТП?</summary>
+                        <p style="margin: 15px 0 0 0; color: #666; font-size: 14px; line-height: 1.5;">У першу чергу переконайтеся у безпеці всіх учасників. Негайно викличте поліцію (102) та зателефонуйте на нашу гарячу лінію підтримки. Не покидайте місце пригоди до приїзду поліції та нашого менеджера.</p>
+                    </details>
+
+                    <details style="background: #fff; border-radius: 12px; padding: 15px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer;">
+                        <summary style="font-weight: 600; font-size: 16px; color: #333; outline: none;">Чи потрібно мити авто перед поверненням?</summary>
+                        <p style="margin: 15px 0 0 0; color: #666; font-size: 14px; line-height: 1.5;">Ви отримуєте чистий автомобіль і ми очікуємо його повернення в такому ж стані. Якщо авто повертається брудним, вартість мийки може бути вирахувана з вашого депозиту.</p>
+                    </details>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>

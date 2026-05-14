@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заявки клієнтів - DriveKRYV Модератор</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        html, body {
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            height: auto !important;
+            min-height: 100vh !important;
+        }
+
+        .order-card {
+            background: white; border-radius: 20px; padding: 25px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; 
+            gap: 30px; align-items: stretch; transition: transform 0.2s;
+            margin-bottom: 20px;
+        }
+        .order-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
+        .order-info p { margin: 8px 0; color: #555; font-size: 15px; }
+        .order-info strong { color: #111; font-weight: 700; }
+        
+        /* Оновлені фірмові кнопки */
+        .btn-confirm { 
+            background: #51BBED; 
+            color: white; 
+            border: 2px solid #51BBED; 
+            padding: 14px; 
+            border-radius: 12px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            width: 100%; 
+            font-size: 16px; 
+        }
+        .btn-reject { 
+            background: transparent; 
+            color: #51BBED; 
+            border: 2px solid #51BBED; 
+            padding: 14px; 
+            border-radius: 12px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            width: 100%; 
+            font-size: 16px;
+        }
+        .btn-confirm:hover { background: #3aa6d8; border-color: #3aa6d8; }
+        .btn-reject:hover { background: rgba(81, 187, 237, 0.1); }
+    </style>
+</head>
+<body style="background-color: #f4f7f6; margin: 0; min-height: 100vh; display: flex; flex-direction: column; overflow-y: auto !important; height: auto !important;">
+
+<header style="display: flex; justify-content: space-between; align-items: center; background-color: #51BBED; padding: 15px 40px; box-sizing: border-box;">
+        <h2 style="color: white; margin: 0; font-size: 20px;">Панель модератора: Заявки</h2>
+        <button class="btn-back" onclick="window.history.back()" style="background: transparent; color: white; border: 1px solid white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: 600;"> < Назад</button>
+    </header>
+
+    <div style="max-width: 1000px; margin: 40px auto; padding: 0 20px; width: 100%; box-sizing: border-box; flex-grow: 1;">
+        <h2 style="text-align: center; color: #333; font-size: 30px; margin-bottom: 40px;">Заявки, що очікують підтвердження</h2>
+        <div id="orders-list" style="display: flex; flex-direction: column;">
+            </div>
+    </div>
+
+    <script src="cars.js"></script>
+    <script src="main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const isMod = localStorage.getItem('isModerator') === 'true';
+            if (!isMod) {
+                document.getElementById('orders-list').innerHTML = '<div style="text-align:center; padding: 50px; background: white; border-radius: 20px;"><h2 style="color:red; margin:0;">У вас немає доступу до цієї сторінки.</h2></div>';
+                return;
+            }
+
+            const ordersList = document.getElementById('orders-list');
+            let allPendingOrders = [];
+
+            // 1. Скануємо весь localStorage
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('history_')) {
+                    const userName = key.replace('history_', '');
+                    let userHistory = [];
+                    try {
+                        userHistory = JSON.parse(localStorage.getItem(key) || '[]');
+                    } catch(e) {}
+
+                    // 2. Витягуємо тільки ті заявки, які ще не підтверджені
+                    userHistory.forEach((order, index) => {
+                        if (!order.status || order.status === 'Очікує підтвердження' || order.status.toLowerCase().includes('очіку')) {
+                            allPendingOrders.push({
+                                userKey: key,
+                                orderIndex: index,
+                                userName: userName,
+                                ...order
+                            });
+                        }
+                    });
+                }
+            }
+
+            // Функція малювання заявок
+            function renderOrders() {
+                if (allPendingOrders.length === 0) {
+                    ordersList.innerHTML = `
+                        <div style="text-align:center; padding: 60px; background: white; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                            <h3 style="color:#666; margin:0; font-size: 22px;">Немає нових заявок на розгляд 🎉</h3>
+                        </div>`;
+                    return;
+                }
+
+                ordersList.innerHTML = '';
+                allPendingOrders.forEach(order => {
+                    // Гібридний пошук машини
+                    let overrides = {};
+                    try { overrides = JSON.parse(localStorage.getItem('cars_overrides') || '{}'); } catch(e) {}
+                    
+                    let baseCar = carsData.find(c => c.id === order.carId);
+                    let car = baseCar ? { ...baseCar, ...(overrides[order.carId] || {}) } : null;
+
+                    if (!car) {
+                        car = { 
+                            brand: order.carName.split(' ')[0] || 'Невідоме', 
+                            model: order.carName.split(' ').slice(1).join(' ') || 'Авто', 
+                            imageMain: order.image || 'icons/logo.png' 
+                        };
+                    }
+
+                    const phone = localStorage.getItem('userPhone') || 'Не вказано в профілі';
+                    const deliveryText = order.delivery === 'office' ? 'В офісі' : 'Доставка за адресою';
+                    const addressHTML = order.address && order.address !== 'Не вказано' 
+                        ? `<p style="margin-top: 10px; color: #51BBED;"><strong>📍 Адреса:</strong> ${order.address}</p>` 
+                        : '';
+                    const commentHTML = order.comment 
+                        ? `<p style="margin-top: 10px; font-style: italic; background: #f9f9f9; padding: 10px; border-radius: 8px;"><strong>Коментар:</strong> ${order.comment}</p>` 
+                        : '';
+
+                    const orderHTML = `
+                        <div class="order-card">
+                            <div style="width: 250px; border-radius: 12px; overflow: hidden; background: #f4f7f6; flex-shrink: 0;">
+                                <img src="${car.imageMain}" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                            
+                            <div class="order-info" style="flex: 1; min-width: 350px; display: flex; flex-direction: column; justify-content: center;">
+                                <h3 style="margin: 0 0 15px 0; color: #000; font-size: 24px;">${car.brand} ${car.model}</h3>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px 30px;">
+                                    <div>
+                                        <p><strong>Клієнт:</strong> ${order.customerName || order.userName}</p>
+                                        <p><strong>Телефон:</strong> ${phone}</p>
+                                        <p><strong>Дата старту:</strong> ${order.date}</p>
+                                        <p><strong>Дата кінця:</strong> ${order.endDate}</p>
+                                    </div>
+                                    <div>
+                                        <p><strong>Термін оренди:</strong> ${order.days} дн.</p>
+                                        <p><strong>Спосіб отримання:</strong> ${deliveryText}</p>
+                                        ${addressHTML}
+                                    </div>
+                                </div>
+                                ${commentHTML}
+                                <div style="margin-top: 15px; border-top: 1px dashed #eee; padding-top: 15px;">
+                                    <span style="font-size: 16px; color: #555;">Сума до сплати:</span>
+                                    <span style="color: #000; font-size: 22px; font-weight: 800; margin-left: 10px;">${order.total} ₴</span>
+                                </div>
+                            </div>
+
+                            <div style="min-width: 180px; display: flex; flex-direction: column; gap: 15px; justify-content: center; border-left: 1px solid #eee; padding-left: 25px;">
+                                <button onclick="updateOrderStatus('${order.userKey}', ${order.orderIndex}, 'Підтверджено ✅')" class="btn-confirm">Підтвердити</button>
+                                <button onclick="updateOrderStatus('${order.userKey}', ${order.orderIndex}, 'Відхилено ❌')" class="btn-reject">Відхилити</button>
+                            </div>
+                        </div>
+                    `;
+                    ordersList.insertAdjacentHTML('beforeend', orderHTML);
+                });
+            }
+
+            // Функція зміни статусу заявки
+            window.updateOrderStatus = function(userKey, orderIndex, newStatus) {
+                let userHistory = JSON.parse(localStorage.getItem(userKey) || '[]');
+                if (userHistory[orderIndex]) {
+                    userHistory[orderIndex].status = newStatus;
+                    localStorage.setItem(userKey, JSON.stringify(userHistory));
+                }
+                
+                // Видаляємо з масиву і перемальовуємо
+                allPendingOrders = allPendingOrders.filter(o => !(o.userKey === userKey && o.orderIndex === orderIndex));
+                renderOrders();
+            };
+
+            renderOrders();
+        });
+    </script>
+</body>
+</html>

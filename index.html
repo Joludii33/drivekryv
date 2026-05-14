@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveKRYV - Головна (Гість)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header style="display: flex; justify-content: space-between; align-items: center; background-color: #51BBED; padding: 15px 40px; width: 100%; box-sizing: border-box;">
+        <div style="display: flex; align-items: center;">
+            <a href="index.html">
+                <img src="icons/logo.png" alt="DriveKRYV Logo" style="height: 45px; width: auto; object-fit: contain;">
+            </a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 24px;">
+            <a href="register.html" style="color: #FFFFFF; text-decoration: none; font-weight: 500; font-size: 16px;">Зареєструватись</a>
+            <button id="btn-login" style="background-color: #FFFFFF; color: #51BBED; border: none; border-radius: 20px; padding: 8px 24px; font-weight: 500; font-size: 16px; cursor: pointer;">Вхід</button>
+        </div>
+    </header>
+
+    <div class="layout-container">
+<aside class="sidebar">
+            <div class="filter-block">
+                <label for="search" class="filter-label">Пошук за назвою:</label>
+                <div class="input-wrapper">
+                    <input type="text" id="search" class="search-input" placeholder="">
+                    <img src="icons/search-icon.png" alt="Search" class="input-icon">
+                </div>
+            </div>
+
+            <div class="filter-block">
+                <div class="price-header">
+                    <label class="filter-label">Ціна:</label>
+                    <div class="top-toggle-group">
+                        <button class="top-toggle-btn active">За день</button>
+                        <button class="top-toggle-btn">За місяць</button>
+                    </div>
+                </div>
+                
+                <div class="range-slider-visual">
+                    <div class="range-fill"></div>
+                    <div class="range-thumb left"></div>
+                    <div class="range-thumb right"></div>
+                </div>
+
+                <div class="price-inputs">
+                    <input type="number" id="min-price" value="100" class="price-input">
+                    <span>-</span>
+                    <input type="number" id="max-price" value="1500" class="price-input">
+                </div>
+            </div>
+
+            <div class="filter-block">
+                <label class="filter-label">Тип кузова:</label>
+                <div class="body-types-group">
+                    <button class="body-btn filter-btn" data-type="micro"><img src="icons/car-micro.png" alt="Micro"></button>
+                    <button class="body-btn filter-btn" data-type="sedan"><img src="icons/car-sedan.png" alt="Sedan"></button>
+                    <button class="body-btn filter-btn" data-type="suv"><img src="icons/car-suv.png" alt="SUV"></button>
+                    <button class="body-btn filter-btn" data-type="cabrio"><img src="icons/car-cabrio.png" alt="Cabrio"></button>
+                </div>
+            </div>
+
+            <div class="filter-block">
+                <label class="filter-label">Коробка передач:</label>
+                <div class="gearbox-group">
+                    <button class="gearbox-btn filter-btn" data-gearbox="Автоматична">Автоматична</button>
+                    <button class="gearbox-btn filter-btn" data-gearbox="Механічна">Механічна</button>
+                </div>
+            </div>
+
+            <div id="advanced-filters-block" style="display: none; flex-direction: column; gap: 20px;">
+                
+                <div class="filter-block">
+                    <label class="filter-label">Кількість місць:</label>
+                    <div class="gearbox-group">
+                        <button class="gearbox-btn filter-btn" data-seats="2">2</button>
+                        <button class="gearbox-btn filter-btn" data-seats="4">4</button>
+                        <button class="gearbox-btn filter-btn" data-seats="5">5</button>
+                        <button class="gearbox-btn filter-btn" data-seats="7">7+</button>
+                    </div>
+                </div>
+
+                <div class="filter-block">
+                    <label class="filter-label">Привід:</label>
+                    <div class="gearbox-group">
+                        <button class="gearbox-btn filter-btn" data-drive="Передній">Передній</button>
+                        <button class="gearbox-btn filter-btn" data-drive="Задній">Задній</button>
+                        <button class="gearbox-btn filter-btn" data-drive="Повний">Повний</button>
+                    </div>
+                </div>
+
+                <div class="filter-block">
+                    <label class="filter-label">Потужність (к.с.):</label>
+                    <div class="price-inputs">
+                        <input type="number" id="min-hp" placeholder="Від" class="price-input">
+                        <span>-</span>
+                        <input type="number" id="max-hp" placeholder="До" class="price-input">
+                    </div>
+                </div>
+
+                <div class="filter-block">
+                    <label class="filter-label">Тип палива:</label>
+                    <div class="gearbox-group">
+                        <button class="gearbox-btn filter-btn" data-fuel="Бензин">Бензин</button>
+                        <button class="gearbox-btn filter-btn" data-fuel="Дизель">Дизель</button>
+                        <button class="gearbox-btn filter-btn" data-fuel="Електро">Електро</button>
+                    </div>
+                </div>
+
+                <div class="filter-block">
+                    <label class="filter-label">Рік випуску:</label>
+                    <div class="price-inputs">
+                        <input type="number" id="min-year" placeholder="Від 2010" class="price-input">
+                        <span>-</span>
+                        <input type="number" id="max-year" placeholder="До 2024" class="price-input">
+                    </div>
+                </div>
+
+                <div class="filter-block">
+                    <label class="filter-label">Об'єм двигуна (л):</label>
+                    <div class="price-inputs">
+                        <input type="number" step="0.1" id="min-volume" placeholder="Від" class="price-input">
+                        <span>-</span>
+                        <input type="number" step="0.1" id="max-volume" placeholder="До" class="price-input">
+                    </div>
+                </div>
+
+            </div> 
+            <div class="filter-footer">
+                <button class="btn-advanced" id="btn-advanced">Додатково <span style="font-size: 14px;">▼</span></button> 
+            </div>
+
+        </aside>
+
+<main class="content">
+            
+            <div id="cars-container" style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 50px;">
+            </div>
+
+<footer class="site-footer">
+                <div class="footer-container">
+                    
+                    <div class="footer-top-text">
+                        <h3>DriveKRYV - Надійний сервіс оренди автомобілів у Кривому Розі.</h3>
+                        <p>Це вигадана організація та навчальний проєкт, тому в нас немає реальних соцмереж чи офісу.<br>Проте якби вони були, то мали б такі посилання:</p>
+                    </div>
+
+                    <div class="footer-socials">
+                        <div class="social-item">
+                            <div class="social-icon"><img src="icons/icon-inst.png" alt="Instagram"></div>
+                            <span>DriveKRYV</span>
+                        </div>
+                        <div class="social-item">
+                            <div class="social-icon"><img src="icons/icon-x.png" alt="X"></div>
+                            <span>DriveKRYV</span>
+                        </div>
+                        <div class="social-item">
+                            <div class="social-icon"><img src="icons/icon-viber.png" alt="Viber"></div>
+                            <span>DriveKRYV</span>
+                        </div>
+                    </div>
+
+                    <div class="footer-divider">
+                        А також ми б хотіли мати:
+                    </div>
+
+                    <div class="footer-contacts">
+                        <div class="contact-block">
+                            <h4>Головний офіс:</h4>
+                            <p>📍 площа 95-й Квартал, Кривий Ріг</p>
+                        </div>
+                        <div class="contact-block">
+                            <h4>Телефон гарячої лінії:</h4>
+                            <p>📞 +380 (99) 000-00-00</p>
+                        </div>
+                    </div>
+
+                    <div class="footer-easter-egg">
+                        Якщо ви це прочитали - поставте 10, будь ласка
+                    </div>
+
+                </div>
+            </footer>
+
+        </main>
+    </div>
+    <script src="cars.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

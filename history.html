@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Історія оренди - DriveKRYV</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="background-color: #f4f7f6;">
+    <header style="display: flex; justify-content: space-between; align-items: center; background-color: #51BBED; padding: 15px 40px; width: 100%; box-sizing: border-box;">
+        <a href="index-logged.html"><img src="icons/logo.png" alt="Logo" style="height: 45px;"></a>
+        <button class="btn-back" onclick="window.location.href='index-logged.html'" style="background: transparent; color: white; border: 1px solid white; padding: 8px 16px; border-radius: 20px; cursor: pointer;"> < Назад</button>
+    </header>
+
+    <div class="layout-container" style="padding: 40px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box;">
+        <h1 style="margin-bottom: 30px;">Ваша історія оренди</h1>
+        <div id="history-container" style="display: flex; flex-direction: column; gap: 20px;">
+            </div>
+    </div>
+
+    <script src="cars.js"></script>
+    <script src="main.js"></script>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const historyContainer = document.getElementById('history-container');
+            const name = localStorage.getItem('userName') || 'guest';
+            
+            // 1. ВИПРАВЛЕНО: тепер ключ збігається з тим, що у файлі rent (history_ім'я)
+            const historyData = JSON.parse(localStorage.getItem(`history_${name}`) || '[]');
+            
+            if (historyData.length === 0) {
+                historyContainer.innerHTML = '<h2>Ви ще не орендували жодного автомобіля.</h2>';
+                return;
+            }
+
+            historyContainer.innerHTML = ''; // Очищаємо перед виведенням
+            
+            // Ми використовували unshift при збереженні, тому нові замовлення вже перші. reverse() не треба
+            historyData.forEach(item => {
+                // 2. ВИПРАВЛЕНО: шукаємо машину по carId, а не по id замовлення
+                const car = carsData.find(c => c.id === item.carId);
+                
+                if (car) {
+                    historyContainer.innerHTML += `
+                        <div style="background: #fff; padding: 20px; border-radius: 15px; display: flex; align-items: center; gap: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px;">
+                            
+                            <img src="${car.imageMain}" alt="${car.brand}" style="width: 150px; height: 100px; object-fit: cover; border-radius: 10px;">
+                            
+                            <div style="flex-grow: 1;">
+                                <h3 style="margin: 0 0 5px 0;">${car.brand} ${car.model}</h3>
+                                <p style="margin: 0; color: #666;">Період: <strong>${item.date} — ${item.endDate}</strong> (${item.days} дн.)</p>
+                                <p style="margin: 5px 0 0 0; font-size: 14px; color: #888;">Статус: <span style="color: #51BBED;">${item.status}</span></p>
+                            </div>
+                            
+                            <div style="text-align: right;">
+                                <span style="display: block; font-weight: bold; font-size: 18px; color: #51BBED;">${item.total} ₴ Разом</span>
+                                <a href="car-details.html?id=${car.id}" style="color: #999; text-decoration: none; font-size: 14px; display: inline-block; margin-top: 5px;">Деталі авто →</a>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

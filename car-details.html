@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Деталі авто - DriveKRYV</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        html, body {
+            overflow-y: auto !important; 
+            overflow-x: hidden !important; 
+            height: auto !important;
+            min-height: 100vh !important;
+        }
+        .layout-container, .car-details-container {
+            overflow: visible !important;
+            height: auto !important;
+        }
+    </style>
+</head>
+<body style="background-color: #f4f7f6; margin: 0; min-height: 100vh; height: auto !important; overflow-y: auto !important; overflow-x: hidden; display: flex; flex-direction: column;">
+    
+    <div class="layout-container" style="padding: 40px; max-width: 1100px; margin: 0 auto; width: 100%; box-sizing: border-box; flex-grow: 1;">
+        <main class="car-details-container" id="details-container">
+        </main>
+    </div>
+
+    <script src="cars.js"></script>
+    <script src="main.js"></script> 
+
+    <script>
+        // Функція для роботи кнопки "В обране"
+        window.toggleFavDetail = function(carId, imgElement) {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                alert('Щоб додавати авто в обране, будь ласка, увійдіть в акаунт або зареєструйтесь.');
+                return;
+            }
+
+            const name = localStorage.getItem('userName') || 'guest';
+            let favs = JSON.parse(localStorage.getItem(`favorites_${name}`) || '[]');
+
+            if (favs.includes(carId)) {
+                favs = favs.filter(id => id !== carId);
+                imgElement.src = 'icons/icon-fav.png'; 
+            } else {
+                favs.push(carId);
+                imgElement.src = 'icons/icon-fav-active.png'; 
+            }
+            
+            localStorage.setItem(`favorites_${name}`, JSON.stringify(favs));
+        };
+            
+        // Логіка галереї (слайдера)
+        window.allCarImages = [];
+        window.currentImgIndex = 0;
+
+        window.changeMainImage = function(index) {
+            window.currentImgIndex = index;
+            document.getElementById('detail-main-img').src = window.allCarImages[index];
+            
+            document.querySelectorAll('.thumb-wrapper').forEach((el, i) => {
+                el.style.borderColor = i === index ? '#51BBED' : 'transparent';
+            });
+        };
+
+        window.slideImage = function(direction) {
+            window.currentImgIndex += direction;
+            if (window.currentImgIndex < 0) window.currentImgIndex = window.allCarImages.length - 1;
+            if (window.currentImgIndex >= window.allCarImages.length) window.currentImgIndex = 0;
+            window.changeMainImage(window.currentImgIndex);
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedName = localStorage.getItem('userName');
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            
+// ==========================================
+            // 2. ПІДТЯГУВАННЯ ДАНИХ АВТО (З РОЗШИРЕНИМ РЕДАГУВАННЯМ)
+            // ==========================================
+            const urlParams = new URLSearchParams(window.location.search);
+            const carId = urlParams.get('id');
+            const isEditMode = urlParams.get('edit') === 'true' && localStorage.getItem('isModerator') === 'true';
+            const container = document.getElementById('details-container');
+
+            let baseCar = carsData.find(c => c.id === carId);
+            
+            if (baseCar) {
+                const overrides = JSON.parse(localStorage.getItem('cars_overrides') || '{}');
+                const car = { ...baseCar, ...(overrides[carId] || {}) };
+
+                const savedName = localStorage.getItem('userName');
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                // Визначаємо посилання на головну для кнопки "Назад"
+                const homeUrl = isLoggedIn ? 'index-logged.html' : 'index.html';
+                const rentPageUrl = (savedName && isLoggedIn) ? 'rent-logged.html' : 'rent.html';
+                
+                const techSpecsHTML = car.techSpecs ? car.techSpecs.map(spec => `<li style="margin-bottom: 8px;">${spec}</li>`).join('') : '';
+                const featuresHTML = car.features ? car.features.map(feat => `<li style="margin-bottom: 8px;">${feat}</li>`).join('') : '';
+
+                const favs = JSON.parse(localStorage.getItem(`favorites_${savedName || 'guest'}`) || '[]');
+                const isFav = isLoggedIn && favs.includes(car.id);
+
+                window.allCarImages = [car.imageMain];
+                if (car.gallery) window.allCarImages = window.allCarImages.concat(car.gallery);
+                window.currentImgIndex = 0;
+
+                const thumbsHTML = window.allCarImages.map((img, index) => `
+                    <div class="thumb-wrapper" onclick="changeMainImage(${index})" style="flex: 1; aspect-ratio: 1/1; border-radius: 10px; overflow: hidden; cursor: pointer; border: 2px solid ${index === 0 ? '#51BBED' : 'transparent'}; box-sizing: border-box; transition: border-color 0.2s;">
+                        <div style="width: 100%; height: 100%; background-image: url('${img}'); background-size: cover; background-position: center;"></div>
+                    </div>
+                `).join('');
+
+                if (isEditMode) {
+                    // ==========================================
+                    // РЕЖИМ МОДЕРАТОРА: РОЗШИРЕНА ФОРМА
+                    // ==========================================
+                    container.innerHTML = `
+                        <div style="background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); max-width: 1000px; margin: 0 auto;">
+                            <h1 style="margin-top: 0; color: #333; border-bottom: 2px solid #51BBED; padding-bottom: 15px;">Керування авто: ${car.brand} ${car.model}</h1>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px;">
+                                <div>
+                                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Ціна за день (₴):</label>
+                                    <input type="number" id="edit-priceDay" value="${car.priceDay}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
+                                    
+                                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Ціна за місяць (₴):</label>
+                                    <input type="number" id="edit-priceMonth" value="${car.priceMonth}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
+
+                                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Головне фото (шлях):</label>
+                                    <input type="text" id="edit-imageMain" value="${car.imageMain}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
+                                    
+                                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Додаткові фото (кожна з нового рядка):</label>
+                                    <textarea id="edit-gallery" rows="4" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; resize: vertical;">${car.gallery ? car.gallery.join('\n') : ''}</textarea>
+                                </div>
+
+                                <div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                        <div>
+                                            <label style="display: block; font-weight: 600; margin-bottom: 8px;">Двигун:</label>
+                                            <input type="text" id="edit-engine" value="${car.engine}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
+                                        </div>
+                                        <div>
+                                            <label style="display: block; font-weight: 600; margin-bottom: 8px;">Коробка:</label>
+                                            <input type="text" id="edit-gearbox" value="${car.gearbox}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
+                                        </div>
+                                    </div>
+                                    
+                                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Технічна інформація (кожна з нового рядка):</label>
+                                    <textarea id="edit-techSpecs" rows="4" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; resize: vertical;">${car.techSpecs ? car.techSpecs.join('\n') : ''}</textarea>
+
+                                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Особливості (кожна з нового рядка):</label>
+                                    <textarea id="edit-features" rows="4" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; resize: vertical;">${car.features ? car.features.join('\n') : ''}</textarea>
+                                </div>
+                            </div>
+
+                            <label style="display: block; font-weight: 600; margin-top: 10px; margin-bottom: 8px;">Повний опис:</label>
+                            <textarea id="edit-description" rows="5" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 25px; resize: vertical; font-size: 15px;">${car.fullDescription || car.description}</textarea>
+                            
+                            <div style="display: flex; gap: 15px; justify-content: center; border-top: 1px solid #eee; padding-top: 25px;">
+                                <button id="btn-save-car" style="background: #51BBED; color: white; border: none; padding: 15px 40px; border-radius: 30px; font-weight: 700; font-size: 16px; cursor: pointer; transition: transform 0.1s;">Зберегти всі зміни</button>
+                                <button onclick="window.location.href='car-details.html?id=${car.id}'" style="background: #eee; color: #333; border: none; padding: 15px 40px; border-radius: 30px; font-weight: 700; font-size: 16px; cursor: pointer;">Скасувати</button>
+                            </div>
+                        </div>
+                    `;
+
+                    // ЛОГІКА ЗБЕРЕЖЕННЯ
+                    document.getElementById('btn-save-car').addEventListener('click', () => {
+                        const newOverrides = {
+                            priceDay: parseInt(document.getElementById('edit-priceDay').value),
+                            priceMonth: parseInt(document.getElementById('edit-priceMonth').value),
+                            imageMain: document.getElementById('edit-imageMain').value,
+                            gallery: document.getElementById('edit-gallery').value.split('\n').filter(line => line.trim() !== ''),
+                            engine: document.getElementById('edit-engine').value,
+                            gearbox: document.getElementById('edit-gearbox').value,
+                            techSpecs: document.getElementById('edit-techSpecs').value.split('\n').filter(line => line.trim() !== ''),
+                            features: document.getElementById('edit-features').value.split('\n').filter(line => line.trim() !== ''),
+                            description: document.getElementById('edit-description').value,
+                            fullDescription: document.getElementById('edit-description').value,
+                        };
+
+                        let currentOverrides = JSON.parse(localStorage.getItem('cars_overrides') || '{}');
+                        if (!currentOverrides[car.id]) currentOverrides[car.id] = {};
+                        currentOverrides[car.id] = { ...currentOverrides[car.id], ...newOverrides };
+                        
+                        localStorage.setItem('cars_overrides', JSON.stringify(currentOverrides));
+                        // Після збереження кидаємо на чисту сторінку деталей (вже без ловушки)
+                        window.location.href = `car-details.html?id=${car.id}`;
+                    });
+
+                } else {
+                    // ==========================================
+                    // ЗВИЧАЙНИЙ РЕЖИМ (ВИПРАВЛЕНА КНОПКА НАЗАД)
+                    // ==========================================
+                    container.innerHTML = `
+                        <div style="display: flex; gap: 50px; flex-wrap: wrap; margin-bottom: 30px; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                            
+                            <div style="flex: 1; min-width: 400px; max-width: 600px;">
+                                <div style="width: 100%; aspect-ratio: 4/3; border-radius: 15px; overflow: hidden; position: relative; margin-bottom: 15px; background: #f4f7f6;">
+                                    <button onclick="slideImage(-1)" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; color: #333; cursor: pointer; z-index: 10; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: background 0.2s;">❮</button>
+                                    <img id="detail-main-img" src="${window.allCarImages[0]}" alt="${car.model}" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                                    <button onclick="slideImage(1)" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; color: #333; cursor: pointer; z-index: 10; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: background 0.2s;">❯</button>
+                                </div>
+                                <div style="display: flex; gap: 10px;">${thumbsHTML}</div>
+                            </div>
+
+                            <div style="flex: 1; min-width: 350px; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 40px; gap: 20px;">
+                                    <h1 style="margin: 0; font-size: 32px; color: #000; text-align: left;">${car.brand} ${car.model}</h1>
+                                    <button onclick="window.location.href='${homeUrl}'" style="background: #51BBED; color: white; border: none; padding: 10px 24px; border-radius: 20px; font-weight: 600; cursor: pointer;"> < На головну</button>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px 40px; width: 100%; max-width: 450px; margin-bottom: 40px; text-align: left;">
+                                    <div style="display: flex; align-items: center; gap: 12px; font-weight: 600;"><img src="icons/icon-fuel.png" style="width: 24px;"> ${car.engine}</div>
+                                    <div style="display: flex; align-items: center; gap: 12px; font-weight: 600;"><img src="icons/icon-gearbox.png" style="width: 24px;"> ${car.gearbox}</div>
+                                    <div style="display: flex; align-items: center; gap: 12px; font-weight: 600;"><img src="icons/icon-seats.png" style="width: 24px;"> ${car.capacity}</div>
+                                    <div style="display: flex; align-items: center; gap: 12px; font-weight: 600;"><img src="icons/icon-consumption.png" style="width: 24px;"> ${car.consumption || '8 л / 100 км'}</div>
+                                </div>
+
+                                <div style="margin-bottom: 40px;">
+                                    <strong style="font-size: 26px;">${car.priceDay}₴</strong><span>/день</span> 
+                                    <span style="color: #666; font-size: 14px; margin-left: 5px;">· ${car.priceMonth}₴/місяць</span>
+                                </div>
+
+                                <div style="display: flex; gap: 20px; justify-content: center;">
+                                    <a href="${rentPageUrl}?id=${car.id}"><button style="background: #51BBED; color: white; border: none; padding: 14px 40px; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer;">Орендувати</button></a>
+                                    <button onclick="toggleFavDetail('${car.id}', this.querySelector('img'))" style="background: white; border: 1.5px solid #000; padding: 0 25px; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 10px; height: 50px;">
+                                        В обране <img src="${isFav ? 'icons/icon-fav-active.png' : 'icons/icon-fav.png'}" style="width: 24px;">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                            <h3 style="font-size: 18px; margin-bottom: 15px;">Технічна інформація:</h3>
+                            <ul style="color: #444; margin-bottom: 30px; padding-left: 20px; line-height: 1.5;">${techSpecsHTML}</ul>
+                            <h3 style="font-size: 18px; margin-bottom: 15px;">Особливості:</h3>
+                            <ul style="color: #444; margin-bottom: 30px; padding-left: 20px; line-height: 1.5;">${featuresHTML}</ul>
+                            <p style="color: #444; line-height: 1.6; margin: 0; white-space: pre-wrap;">${car.fullDescription || car.description}</p>
+                        </div>
+                    `;
+                }
+            } else {
+                container.innerHTML = `<h1 style="text-align: center; padding: 50px;">Автомобіль не знайдено :(</h1>`;
+            }
+        });
+    </script>
+</body>
+</html>

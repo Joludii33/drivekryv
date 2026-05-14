@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveKRYV - Обране</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header style="display: flex; justify-content: space-between; align-items: center; background-color: #51BBED; padding: 15px 40px; width: 100%; box-sizing: border-box;">
+        <div style="display: flex; align-items: center;">
+            <a href="index-logged.html"><img src="icons/logo.png" alt="DriveKRYV Logo" style="height: 45px; width: auto; object-fit: contain;"></a>
+        </div>
+        <div>
+            <button class="btn-back" onclick="window.location.href='index-logged.html'" style="background: transparent; color: white; border: 1px solid white;"> < Назад</button>
+        </div>
+    </header>
+
+    <div class="layout-container" style="display: flex; flex-direction: column; padding: 40px; width: 100%; box-sizing: border-box;">
+        <h2 style="margin-bottom: 20px;">Мої збережені автомобілі:</h2>
+        <main class="content" id="cars-container" style="display: flex; flex-wrap: wrap; gap: 20px; width: 100%; overflow-y: visible;">
+        </main>
+    </div>
+
+    <script src="cars.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
