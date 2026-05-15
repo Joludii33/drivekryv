@@ -113,22 +113,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dropdownUserName) dropdownUserName.innerHTML = `${firstName} <span>${lastName}</span>`;
     }
 
-    // --- НОВЕ: Динамічно додаємо пункт "Заявки клієнтів" в меню, якщо це модератор ---
+    // Динамічно додаємо пункт "Заявки клієнтів" в меню, якщо це модератор
     if (isLoggedIn && localStorage.getItem('isModerator') === 'true') {
         const menuList = document.querySelector('.dropdown-menu-list');
         if (menuList && !document.getElementById('mod-confirm-link')) {
             const modLinkHTML = `
                 <li id="mod-confirm-link" style="background: rgba(81, 187, 237, 0.1); border-radius: 8px; margin-bottom: 5px;">
                     <a href="confirmations.html" style="color: #51BBED; font-weight: bold;">
-                        <img src="icons/list-icon.png" alt=""> Заявки клієнтів
+                        <img src="icons/icon-history.png" alt=""> Заявки клієнтів
                     </a>
                 </li>
             `;
-            // Вставляємо найпершим пунктом у список
             menuList.insertAdjacentHTML('afterbegin', modLinkHTML);
         }
     }
-    // ----------------------------------------------------------------------------------
 
     // Меню профілю (класичне)
     const profileTrigger = document.getElementById('profile-btn') || document.getElementById('profile-trigger');
@@ -174,6 +172,67 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoLink) {
         logoLink.href = isLoggedIn ? "index-logged.html" : "index.html";
     }
+
+    // =========================================================
+    // ЛОГІКА РІВНІВ ТА ЗНИЖОК
+    // =========================================================
+    
+    function getUserStats() {
+        const name = localStorage.getItem('userName') || 'guest';
+        const stats = JSON.parse(localStorage.getItem(`stats_${name}`) || '{"xp": 0, "level": 1, "hasDiscount": false}');
+        return stats;
+    }
+
+function updateProfileUI() {
+        if (!isLoggedIn) return;
+        const stats = getUserStats();
+        
+        // Розрахунок потрібної кількості оренд для наступного рівня (2, 3, 4...)
+        const xpNeeded = stats.level + 1; 
+        const progressPercent = (stats.xp / xpNeeded) * 100;
+
+        // 1. ОНОВЛЕННЯ В МЕНЮ ПРОФІЛЮ
+        const levelText = document.getElementById('profile-level-text');
+        const xpInfo = document.getElementById('profile-xp-text');
+        const progressBar = document.getElementById('profile-progress-bar');
+
+        if (levelText) levelText.textContent = `Рівень ${stats.level}`;
+        if (xpInfo) xpInfo.textContent = `Ще ${xpNeeded - stats.xp} оренди до ${stats.level + 1}-го рівня`;
+        if (progressBar) progressBar.style.width = `${progressPercent}%`;
+
+        // 2. ОНОВЛЕННЯ НА СТОРІНЦІ НАЛАШТУВАНЬ (settings.html)
+        const settingsLevelText = document.getElementById('settings-level-text');
+        const settingsXpText = document.getElementById('settings-xp-text');
+        const settingsProgressBar = document.getElementById('settings-progress-bar');
+
+        if (settingsLevelText) settingsLevelText.textContent = `${stats.level} рівень`;
+        if (settingsXpText) settingsXpText.textContent = `Ще ${xpNeeded - stats.xp} оренди до наступного`;
+        if (settingsProgressBar) settingsProgressBar.style.width = `${progressPercent}%`;
+
+        // 3. ВІДОБРАЖЕННЯ БАНЕРА ЗНИЖКИ НА ГОЛОВНІЙ
+        const container = document.querySelector('main');
+        let discountBanner = document.getElementById('active-discount-banner');
+
+        if (stats.hasDiscount && !discountBanner && window.location.pathname.includes('index')) {
+            const bannerHTML = `
+                <div id="active-discount-banner" style="background: linear-gradient(90deg, #51BBED, #2ecc71); color: white; padding: 15px; border-radius: 15px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; animation: slideDown 0.5s ease;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 24px;">🎁</span>
+                        <div>
+                            <strong style="display: block;">У вас активована знижка 10%!</strong>
+                            <span style="font-size: 13px; opacity: 0.9;">Знижка застосується автоматично при наступному оформленні оренди.</span>
+                        </div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 10px; font-weight: 700;">-10%</div>
+                </div>
+            `;
+            if (container) container.insertAdjacentHTML('afterbegin', bannerHTML);
+        } else if (!stats.hasDiscount && discountBanner) {
+            discountBanner.remove();
+        }
+    }
+
+    updateProfileUI();
 
     // =========================================================
     // БЛОК 3: ЛОГІКА СТОРІНКИ НАЛАШТУВАНЬ (settings.html)
@@ -257,15 +316,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // --- Гібридне завантаження даних (з безпечним парсингом) ---
+        // --- Гібридне завантаження даних ---
         function getFinalCarsData() {
             let baseCars = [...carsData]; 
             let overrides = {};
             try {
                 overrides = JSON.parse(localStorage.getItem('cars_overrides') || '{}');
-            } catch (e) {
-                console.error("Помилка парсингу cars_overrides", e);
-            }
+            } catch (e) {}
             
             let hydratedCars = baseCars.map(car => {
                 if (overrides[car.id]) return { ...car, ...overrides[car.id] };
@@ -297,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isActive = car.isActive !== false; 
 
                 const cardStyle = !isActive ? 'filter: grayscale(1) opacity(0.6); position: relative;' : '';
-                const badgeHTML = !isActive ? '<div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:10; background:rgba(0,0,0,0.8); color:white; padding:15px 30px; border-radius:15px; font-weight:700; font-size: 20px;">В РЕМОНТІ</div>' : '';
+                const badgeHTML = !isActive ? '<div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:10; background:rgba(0,0,0,0.8); color:white; padding:15px 30px; border-radius:15px; font-weight:700; font-size: 20px;">НЕДОСТУПНО</div>' : '';
                 
                 let modButtonsHTML = '';
                 if (isModerator) {
@@ -357,7 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const minPriceInput = document.getElementById('min-price');
         const maxPriceInput = document.getElementById('max-price');
 
-        // --- БЕЗПЕЧНА ФУНКЦІЯ ФІЛЬТРАЦІЇ ---
+        // --- БЕЗПЕЧНА ФУНКЦІЯ ФІЛЬТРАЦІЇ ТА СОРТУВАННЯ ---
         function applyFilters() {
             if (window.location.pathname.includes('favorites.html')) {
                 const favs = getFavorites();
@@ -366,7 +423,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return; 
             }
 
-            // Безпечне отримання значень (запобігає крашам)
             const query = searchInput && searchInput.value ? searchInput.value.toLowerCase().trim() : '';
             const minPrice = minPriceInput && minPriceInput.value ? parseInt(minPriceInput.value) : 0;
             const maxPrice = maxPriceInput && maxPriceInput.value ? parseInt(maxPriceInput.value) : Infinity;
@@ -395,7 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const minVol = minVolEl && minVolEl.value ? parseFloat(minVolEl.value) : 0;
             const maxVol = maxVolEl && maxVolEl.value ? parseFloat(maxVolEl.value) : Infinity;
 
-            const filtered = getFinalCarsData().filter(car => {
+            let filtered = getFinalCarsData().filter(car => {
                 const matchesSearch = `${car.brand} ${car.model}`.toLowerCase().includes(query);
                 const carPrice = priceMode === 'За місяць' ? car.priceMonth : car.priceDay;
                 const matchesPrice = carPrice >= minPrice && carPrice <= maxPrice;
@@ -437,6 +493,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 return matchesSearch && matchesPrice && matchesBody && matchesGearbox && matchesSeats && matchesDrive && matchesHp && matchesFuel && matchesYear && matchesVol;
             });
+
+            // --- ДОДАНО ЛОГІКУ СОРТУВАННЯ ---
+            const sortSelect = document.getElementById('sort-select');
+            if (sortSelect) {
+                const sortValue = sortSelect.value;
+                filtered.sort((a, b) => {
+                    const priceA = priceMode === 'За місяць' ? a.priceMonth : a.priceDay;
+                    const priceB = priceMode === 'За місяць' ? b.priceMonth : b.priceDay;
+
+                    if (sortValue === 'price-asc') return priceA - priceB;
+                    if (sortValue === 'price-desc') return priceB - priceA;
+                    if (sortValue === 'name-asc') return a.brand.localeCompare(b.brand);
+                    return 0; // default
+                });
+            }
             
             renderCars(filtered);
         }
@@ -464,6 +535,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (searchInput) searchInput.addEventListener('input', applyFilters);
         if (minPriceInput) minPriceInput.addEventListener('input', () => { applyFilters(); updateSliderVisuals(); });
         if (maxPriceInput) maxPriceInput.addEventListener('input', () => { applyFilters(); updateSliderVisuals(); });
+        
+        // Слухач для випадаючого списку сортування
+        const sortSelectEl = document.getElementById('sort-select');
+        if (sortSelectEl) sortSelectEl.addEventListener('change', applyFilters);
 
         document.querySelectorAll('.top-toggle-btn').forEach(btn => {
             btn.addEventListener('click', function() {

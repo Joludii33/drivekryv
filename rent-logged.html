@@ -81,8 +81,7 @@
             <div class="rent-card grid-card-conf" style="background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column;">
                 <h2 class="rent-card-title" style="margin-top: 0; margin-bottom: 20px;">3. Підтвердження</h2>
                 <div class="rent-summary" style="background: #f9f9f9; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
-                    <p id="rent-calc-text" style="margin: 5px 0; font-size: 14px;">Автомобіль x 1 день = 0 грн</p>
-                    <p style="margin: 5px 0; font-size: 14px;">Страхування = 100 грн</p>
+                    <p id="rent-calc-text" style="margin: 5px 0; font-size: 14px; line-height: 1.6;">Автомобіль x 1 день = 0 грн<br>Страхування = 100 грн</p>
                     <p class="rent-total" id="rent-total-price" style="font-size: 20px; font-weight: 700; color: #51BBED; margin: 15px 0 0 0;">Разом: 0 грн</p>
                 </div>
                 <button id="btn-confirm-rent" style="width: 100%; background: #51BBED; color: white; border: none; padding: 15px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: auto;">Підтвердити замовлення</button>
@@ -133,12 +132,23 @@
 
                 const insurance = 100;
                 const carTotal = car.priceDay * diffDays;
-                const grandTotal = carTotal + insurance;
+                let grandTotal = carTotal + insurance;
 
-                document.getElementById('rent-calc-text').textContent = `${car.brand} ${car.model} x ${diffDays} дн. = ${carTotal} грн`;
+                // Перевірка наявності знижки з профілю
+                const currentUserName = localStorage.getItem('userName') || 'guest';
+                const userStats = JSON.parse(localStorage.getItem(`stats_${currentUserName}`) || '{"xp": 0, "level": 1, "hasDiscount": false}');
+                
+                let discountHTML = '';
+                if (userStats.hasDiscount) {
+                    const discountAmount = Math.round(grandTotal * 0.10); // 10% знижки
+                    grandTotal -= discountAmount;
+                    discountHTML = `<br><span style="color: #2ecc71; font-weight: bold; display: inline-block; margin-top: 5px;">Знижка (10%): -${discountAmount} грн</span>`;
+                }
+
+                document.getElementById('rent-calc-text').innerHTML = `${car.brand} ${car.model} x ${diffDays} дн. = ${carTotal} грн <br>Страхування = 100 грн ${discountHTML}`;
                 document.getElementById('rent-total-price').textContent = `Разом: ${grandTotal} грн`;
                 
-                return { diffDays, grandTotal };
+                return { diffDays, grandTotal, hadDiscount: userStats.hasDiscount };
             }
 
             startDateInput.addEventListener('change', calculatePrice);
@@ -178,12 +188,45 @@
                 history.unshift(rentalOrder);
                 localStorage.setItem(`history_${currentUserName}`, JSON.stringify(history));
 
+                // ==========================================
+                // ЛОГІКА ДОСВІДУ ТА ЗНИЖОК
+                // ==========================================
+                let userStats = JSON.parse(localStorage.getItem(`stats_${currentUserName}`) || '{"xp": 0, "level": 1, "hasDiscount": false}');
+                
+                // Якщо була використана знижка, прибираємо її
+                if (stats.hadDiscount) {
+                    userStats.hasDiscount = false;
+                }
+
+                // Додаємо 1 XP за оформлення
+                userStats.xp += 1;
+
+                // Перевірка на новий рівень
+                const xpNeeded = userStats.level + 1;
+                if (userStats.xp >= xpNeeded) {
+                    userStats.level += 1;
+                    userStats.xp = 0;
+                    userStats.hasDiscount = true; // Нараховуємо нову знижку
+                    
+                    // Створюємо сповіщення про левелап
+                    let notifications = JSON.parse(localStorage.getItem(`notifications_${currentUserName}`) || '[]');
+                    notifications.unshift({
+                        id: Date.now(),
+                        title: "Новий рівень досягнуто! 🎉",
+                        text: `Вітаємо! Ви отримали ${userStats.level} рівень. Вам нараховано одноразову знижку 10% на наступну поїздку.`,
+                        date: new Date().toLocaleDateString('uk-UA')
+                    });
+                    localStorage.setItem(`notifications_${currentUserName}`, JSON.stringify(notifications));
+                }
+
+                localStorage.setItem(`stats_${currentUserName}`, JSON.stringify(userStats));
+                // ==========================================
+
                 // Викликаємо красиву модалку
                 const modal = document.getElementById('success-modal');
                 if (modal) {
                     modal.style.display = 'flex';
                     document.getElementById('btn-modal-ok').onclick = () => {
-                        // Жорстко кидаємо в акаунт
                         window.location.href = 'index-logged.html';
                     };
                 } else {
