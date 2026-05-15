@@ -119,47 +119,47 @@
                         <div style="background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); max-width: 1000px; margin: 0 auto;">
                             <h1 style="margin-top: 0; color: #333; border-bottom: 2px solid #51BBED; padding-bottom: 15px;">Керування авто: ${car.brand} ${car.model}</h1>
                             
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px;">
+                            <div class="specs-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px;">
                                 <div>
                                     <label style="display: block; font-weight: 600; margin-bottom: 8px;">Ціна за день (₴):</label>
-                                    <input type="number" id="edit-priceDay" value="${car.priceDay}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
+                                    <input type="number" id="edit-priceDay" value="${car.priceDay}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; box-sizing: border-box;">
                                     
                                     <label style="display: block; font-weight: 600; margin-bottom: 8px;">Ціна за місяць (₴):</label>
-                                    <input type="number" id="edit-priceMonth" value="${car.priceMonth}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
+                                    <input type="number" id="edit-priceMonth" value="${car.priceMonth}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; box-sizing: border-box;">
 
                                     <label style="display: block; font-weight: 600; margin-bottom: 8px;">Головне фото (шлях):</label>
-                                    <input type="text" id="edit-imageMain" value="${car.imageMain}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
+                                    <input type="text" id="edit-imageMain" value="${car.imageMain}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; box-sizing: border-box;">
                                     
                                     <label style="display: block; font-weight: 600; margin-bottom: 8px;">Додаткові фото (кожна з нового рядка):</label>
-                                    <textarea id="edit-gallery" rows="4" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; resize: vertical;">${car.gallery ? car.gallery.join('\n') : ''}</textarea>
+                                    <textarea id="edit-gallery" rows="4" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; resize: vertical; box-sizing: border-box;">${car.gallery ? car.gallery.join('\n') : ''}</textarea>
                                 </div>
 
                                 <div>
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                                         <div>
                                             <label style="display: block; font-weight: 600; margin-bottom: 8px;">Двигун:</label>
-                                            <input type="text" id="edit-engine" value="${car.engine}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
+                                            <input type="text" id="edit-engine" value="${car.engine}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; box-sizing: border-box;">
                                         </div>
                                         <div>
                                             <label style="display: block; font-weight: 600; margin-bottom: 8px;">Коробка:</label>
-                                            <input type="text" id="edit-gearbox" value="${car.gearbox}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
+                                            <input type="text" id="edit-gearbox" value="${car.gearbox}" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; box-sizing: border-box;">
                                         </div>
                                     </div>
                                     
                                     <label style="display: block; font-weight: 600; margin-bottom: 8px;">Технічна інформація (кожна з нового рядка):</label>
-                                    <textarea id="edit-techSpecs" rows="4" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; resize: vertical;">${car.techSpecs ? car.techSpecs.join('\n') : ''}</textarea>
+                                    <textarea id="edit-techSpecs" rows="4" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; resize: vertical; box-sizing: border-box;">${car.techSpecs ? car.techSpecs.join('\n') : ''}</textarea>
 
                                     <label style="display: block; font-weight: 600; margin-bottom: 8px;">Особливості (кожна з нового рядка):</label>
-                                    <textarea id="edit-features" rows="4" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; resize: vertical;">${car.features ? car.features.join('\n') : ''}</textarea>
+                                    <textarea id="edit-features" rows="4" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px; resize: vertical; box-sizing: border-box;">${car.features ? car.features.join('\n') : ''}</textarea>
                                 </div>
                             </div>
 
                             <label style="display: block; font-weight: 600; margin-top: 10px; margin-bottom: 8px;">Повний опис:</label>
-                            <textarea id="edit-description" rows="5" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 25px; resize: vertical; font-size: 15px;">${car.fullDescription || car.description}</textarea>
+                            <textarea id="edit-description" rows="5" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 25px; resize: vertical; font-size: 15px; box-sizing: border-box;">${car.fullDescription || car.description}</textarea>
                             
-                            <div style="display: flex; gap: 15px; justify-content: center; border-top: 1px solid #eee; padding-top: 25px;">
-                                <button id="btn-save-car" style="background: #51BBED; color: white; border: none; padding: 15px 40px; border-radius: 30px; font-weight: 700; font-size: 16px; cursor: pointer; transition: transform 0.1s;">Зберегти всі зміни</button>
-                                <button onclick="window.location.href='car-details.html?id=${car.id}'" style="background: #eee; color: #333; border: none; padding: 15px 40px; border-radius: 30px; font-weight: 700; font-size: 16px; cursor: pointer;">Скасувати</button>
+                            <div class="details-actions" style="display: flex; gap: 15px; justify-content: center; border-top: 1px solid #eee; padding-top: 25px;">
+                                <button id="btn-save-car" class="btn-rent-large" style="background: #51BBED; color: white; border: none; padding: 0 40px; border-radius: 30px; font-weight: 700; font-size: 16px; cursor: pointer; transition: transform 0.1s; height: 50px; display: flex; align-items: center; justify-content: center;">Зберегти всі зміни</button>
+                                <button onclick="window.location.href='car-details.html?id=${car.id}'" class="btn-fav-large" style="background: #eee; color: #333; border: none; padding: 0 40px; border-radius: 30px; font-weight: 700; font-size: 16px; cursor: pointer; height: 50px; display: flex; align-items: center; justify-content: center;">Скасувати</button>
                             </div>
                         </div>
                     `;
@@ -184,37 +184,36 @@
                         currentOverrides[car.id] = { ...currentOverrides[car.id], ...newOverrides };
                         
                         localStorage.setItem('cars_overrides', JSON.stringify(currentOverrides));
-                        // Після збереження кидаємо на чисту сторінку деталей (вже без ловушки)
                         window.location.href = `car-details.html?id=${car.id}`;
                     });
 
                 } else {
                     // ==========================================
-                    // ЗВИЧАЙНИЙ РЕЖИМ (ВИПРАВЛЕНА КНОПКА НАЗАД)
+                    // ЗВИЧАЙНИЙ РЕЖИМ
                     // ==========================================
                     container.innerHTML = `
-                        <div style="display: flex; gap: 50px; flex-wrap: wrap; margin-bottom: 30px; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                        <div class="details-top" style="display: flex; gap: 50px; flex-wrap: wrap; margin-bottom: 30px; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
                             
-                            <div style="flex: 1; min-width: 400px; max-width: 600px;">
-                                <div style="width: 100%; aspect-ratio: 4/3; border-radius: 15px; overflow: hidden; position: relative; margin-bottom: 15px; background: #f4f7f6;">
+                            <div class="details-gallery" style="flex: 1; min-width: 400px; max-width: 600px;">
+                                <div class="main-photo-placeholder" style="width: 100%; aspect-ratio: 4/3; border-radius: 15px; overflow: hidden; position: relative; margin-bottom: 15px; background: #f4f7f6;">
                                     <button onclick="slideImage(-1)" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; color: #333; cursor: pointer; z-index: 10; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: background 0.2s;">❮</button>
                                     <img id="detail-main-img" src="${window.allCarImages[0]}" alt="${car.model}" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                                     <button onclick="slideImage(1)" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; color: #333; cursor: pointer; z-index: 10; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: background 0.2s;">❯</button>
                                 </div>
-                                <div style="display: flex; gap: 10px;">${thumbsHTML}</div>
+                                <div class="thumbnails" style="display: flex; gap: 10px;">${thumbsHTML}</div>
                             </div>
 
-                            <div style="flex: 1; min-width: 350px; display: flex; flex-direction: column; align-items: center; text-align: center;">
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 40px; gap: 20px;">
+                            <div class="details-info" style="flex: 1; min-width: 350px; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                                <div class="details-header-row" style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 40px; gap: 20px;">
                                     <h1 style="margin: 0; font-size: 32px; color: #000; text-align: left;">${car.brand} ${car.model}</h1>
-                                    <button onclick="window.location.href='${homeUrl}'" style="background: #51BBED; color: white; border: none; padding: 10px 24px; border-radius: 20px; font-weight: 600; cursor: pointer;"> < На головну</button>
+                                    <button class="btn-back" onclick="window.location.href='${homeUrl}'" style="background: #51BBED; color: white; border: none; padding: 10px 24px; border-radius: 20px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;"> < На головну</button>
                                 </div>
 
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px 40px; width: 100%; max-width: 450px; margin-bottom: 40px; text-align: left;">
-                                    <div style="display: flex; align-items: center; gap: 12px; font-weight: 600;"><img src="icons/icon-fuel.png" style="width: 24px;"> ${car.engine}</div>
-                                    <div style="display: flex; align-items: center; gap: 12px; font-weight: 600;"><img src="icons/icon-gearbox.png" style="width: 24px;"> ${car.gearbox}</div>
-                                    <div style="display: flex; align-items: center; gap: 12px; font-weight: 600;"><img src="icons/icon-seats.png" style="width: 24px;"> ${car.capacity}</div>
-                                    <div style="display: flex; align-items: center; gap: 12px; font-weight: 600;"><img src="icons/icon-consumption.png" style="width: 24px;"> ${car.consumption || '8 л / 100 км'}</div>
+                                <div class="specs-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px 40px; width: 100%; max-width: 450px; margin-bottom: 40px; text-align: left;">
+                                    <div class="spec-item" style="display: flex; align-items: center; gap: 12px; font-weight: 600;"><img src="icons/icon-fuel.png" style="width: 24px;"> ${car.engine}</div>
+                                    <div class="spec-item" style="display: flex; align-items: center; gap: 12px; font-weight: 600;"><img src="icons/icon-gearbox.png" style="width: 24px;"> ${car.gearbox}</div>
+                                    <div class="spec-item" style="display: flex; align-items: center; gap: 12px; font-weight: 600;"><img src="icons/icon-seats.png" style="width: 24px;"> ${car.capacity}</div>
+                                    <div class="spec-item" style="display: flex; align-items: center; gap: 12px; font-weight: 600;"><img src="icons/icon-consumption.png" style="width: 24px;"> ${car.consumption || '8 л / 100 км'}</div>
                                 </div>
 
                                 <div style="margin-bottom: 40px;">
@@ -222,9 +221,9 @@
                                     <span style="color: #666; font-size: 14px; margin-left: 5px;">· ${car.priceMonth}₴/місяць</span>
                                 </div>
 
-                                <div style="display: flex; gap: 20px; justify-content: center;">
-                                    <a href="${rentPageUrl}?id=${car.id}"><button style="background: #51BBED; color: white; border: none; padding: 14px 40px; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer;">Орендувати</button></a>
-                                    <button onclick="toggleFavDetail('${car.id}', this.querySelector('img'))" style="background: white; border: 1.5px solid #000; padding: 0 25px; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 10px; height: 50px;">
+                                <div class="details-actions" style="display: flex; gap: 20px; justify-content: center; width: 100%;">
+                                    <button class="btn-rent-large" onclick="window.location.href='${rentPageUrl}?id=${car.id}'" style="background: #51BBED; color: white; border: none; padding: 0 40px; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; height: 50px; display: flex; align-items: center; justify-content: center;">Орендувати</button>
+                                    <button class="btn-fav-large" onclick="toggleFavDetail('${car.id}', this.querySelector('img'))" style="background: white; border: 1.5px solid #000; padding: 0 25px; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; height: 50px;">
                                         В обране <img src="${isFav ? 'icons/icon-fav-active.png' : 'icons/icon-fav.png'}" style="width: 24px;">
                                     </button>
                                 </div>
