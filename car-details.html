@@ -6,6 +6,7 @@
     <title>Деталі авто - DriveKRYV</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        /* 1. Глобальні фікси скролу */
         html, body {
             overflow-y: auto !important; 
             overflow-x: hidden !important; 
@@ -15,6 +16,78 @@
         .layout-container, .car-details-container {
             overflow: visible !important;
             height: auto !important;
+        }
+
+        /* 2. ДИЗАЙН ДЛЯ ПК (Безпечно винесено з інлайн-стилів) */
+        .details-top {
+            padding: 30px;
+            gap: 50px;
+        }
+        .details-gallery {
+            min-width: 400px;
+            max-width: 600px;
+        }
+        .details-info {
+            min-width: 350px;
+        }
+        .mod-form-container {
+            padding: 40px;
+        }
+
+        /* 3. АДАПТАЦІЯ ДЛЯ ТЕЛЕФОНІВ (Залізобетонна) */
+        @media (max-width: 768px) {
+            .layout-container {
+                padding: 15px !important;
+            }
+            .details-top {
+                padding: 15px !important;
+                gap: 20px !important;
+                flex-direction: column !important;
+            }
+            .mod-form-container {
+                padding: 15px !important;
+            }
+            .details-gallery, .details-info {
+                min-width: 100% !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+            .main-photo-placeholder {
+                height: 250px !important;
+            }
+            .thumbnails {
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 8px !important;
+            }
+            .thumb-wrapper {
+                width: 100% !important;
+                height: 65px !important;
+            }
+            .details-header-row {
+                flex-direction: column-reverse !important;
+                align-items: flex-start !important;
+                gap: 15px !important;
+            }
+            .details-header-row h1 {
+                font-size: 26px !important;
+                margin: 0 !important;
+            }
+            .btn-back {
+                align-self: flex-start !important;
+            }
+            .specs-grid {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+            .details-actions {
+                flex-direction: column !important;
+                gap: 15px !important;
+            }
+            .btn-rent-large, .btn-fav-large {
+                width: 100% !important;
+                padding: 0 15px !important;
+            }
         }
     </style>
 </head>
@@ -29,7 +102,6 @@
     <script src="main.js"></script> 
 
     <script>
-        // Функція для роботи кнопки "В обране"
         window.toggleFavDetail = function(carId, imgElement) {
             const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
             if (!isLoggedIn) {
@@ -51,7 +123,6 @@
             localStorage.setItem(`favorites_${name}`, JSON.stringify(favs));
         };
             
-        // Логіка галереї (слайдера)
         window.allCarImages = [];
         window.currentImgIndex = 0;
 
@@ -72,12 +143,6 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
-            const savedName = localStorage.getItem('userName');
-            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-            
-// ==========================================
-            // 2. ПІДТЯГУВАННЯ ДАНИХ АВТО (З РОЗШИРЕНИМ РЕДАГУВАННЯМ)
-            // ==========================================
             const urlParams = new URLSearchParams(window.location.search);
             const carId = urlParams.get('id');
             const isEditMode = urlParams.get('edit') === 'true' && localStorage.getItem('isModerator') === 'true';
@@ -91,7 +156,6 @@
 
                 const savedName = localStorage.getItem('userName');
                 const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-                // Визначаємо посилання на головну для кнопки "Назад"
                 const homeUrl = isLoggedIn ? 'index-logged.html' : 'index.html';
                 const rentPageUrl = (savedName && isLoggedIn) ? 'rent-logged.html' : 'rent.html';
                 
@@ -112,11 +176,8 @@
                 `).join('');
 
                 if (isEditMode) {
-                    // ==========================================
-                    // РЕЖИМ МОДЕРАТОРА: РОЗШИРЕНА ФОРМА
-                    // ==========================================
                     container.innerHTML = `
-                        <div style="background: #fff; padding: 40px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); max-width: 1000px; margin: 0 auto;">
+                        <div class="mod-form-container" style="background: #fff; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); max-width: 1000px; margin: 0 auto; box-sizing: border-box;">
                             <h1 style="margin-top: 0; color: #333; border-bottom: 2px solid #51BBED; padding-bottom: 15px;">Керування авто: ${car.brand} ${car.model}</h1>
                             
                             <div class="specs-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px;">
@@ -157,14 +218,13 @@
                             <label style="display: block; font-weight: 600; margin-top: 10px; margin-bottom: 8px;">Повний опис:</label>
                             <textarea id="edit-description" rows="5" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 25px; resize: vertical; font-size: 15px; box-sizing: border-box;">${car.fullDescription || car.description}</textarea>
                             
-                            <div class="details-actions" style="display: flex; gap: 15px; justify-content: center; border-top: 1px solid #eee; padding-top: 25px;">
-                                <button id="btn-save-car" class="btn-rent-large" style="background: #51BBED; color: white; border: none; padding: 0 40px; border-radius: 30px; font-weight: 700; font-size: 16px; cursor: pointer; transition: transform 0.1s; height: 50px; display: flex; align-items: center; justify-content: center;">Зберегти всі зміни</button>
-                                <button onclick="window.location.href='car-details.html?id=${car.id}'" class="btn-fav-large" style="background: #eee; color: #333; border: none; padding: 0 40px; border-radius: 30px; font-weight: 700; font-size: 16px; cursor: pointer; height: 50px; display: flex; align-items: center; justify-content: center;">Скасувати</button>
+                            <div class="details-actions" style="display: flex; justify-content: center; border-top: 1px solid #eee; padding-top: 25px;">
+                                <button id="btn-save-car" class="btn-rent-large" style="background: #51BBED; color: white; border: none; border-radius: 30px; font-weight: 700; font-size: 16px; cursor: pointer; height: 50px; display: flex; align-items: center; justify-content: center; padding: 0 40px;">Зберегти всі зміни</button>
+                                <button onclick="window.location.href='car-details.html?id=${car.id}'" class="btn-fav-large" style="background: #eee; color: #333; border: none; border-radius: 30px; font-weight: 700; font-size: 16px; cursor: pointer; height: 50px; display: flex; align-items: center; justify-content: center; padding: 0 40px;">Скасувати</button>
                             </div>
                         </div>
                     `;
 
-                    // ЛОГІКА ЗБЕРЕЖЕННЯ
                     document.getElementById('btn-save-car').addEventListener('click', () => {
                         const newOverrides = {
                             priceDay: parseInt(document.getElementById('edit-priceDay').value),
@@ -188,22 +248,19 @@
                     });
 
                 } else {
-                    // ==========================================
-                    // ЗВИЧАЙНИЙ РЕЖИМ
-                    // ==========================================
+                    // ЗВИЧАЙНИЙ РЕЖИМ (Інлайн-стилі перенесені в CSS)
                     container.innerHTML = `
-                        <div class="details-top" style="display: flex; gap: 50px; flex-wrap: wrap; margin-bottom: 30px; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                        <div class="details-top" style="display: flex; flex-wrap: wrap; margin-bottom: 30px; background: #fff; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); box-sizing: border-box;">
                             
-                            <div class="details-gallery" style="flex: 1; min-width: 400px; max-width: 600px;">
+                            <div class="details-gallery" style="flex: 1;">
                                 <div class="main-photo-placeholder" style="width: 100%; aspect-ratio: 4/3; border-radius: 15px; overflow: hidden; position: relative; margin-bottom: 15px; background: #f4f7f6;">
                                     <button onclick="slideImage(-1)" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; color: #333; cursor: pointer; z-index: 10; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: background 0.2s;">❮</button>
-                                    <img id="detail-main-img" src="${window.allCarImages[0]}" alt="${car.model}" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-                                    <button onclick="slideImage(1)" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; color: #333; cursor: pointer; z-index: 10; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: background 0.2s;">❯</button>
+<img id="detail-main-img" src="${window.allCarImages[0]}" alt="${car.model}" style="width: 100%; height: 100%; object-fit: contain; display: block;">                                    <button onclick="slideImage(1)" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; color: #333; cursor: pointer; z-index: 10; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: background 0.2s;">❯</button>
                                 </div>
                                 <div class="thumbnails" style="display: flex; gap: 10px;">${thumbsHTML}</div>
                             </div>
 
-                            <div class="details-info" style="flex: 1; min-width: 350px; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                            <div class="details-info" style="flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center;">
                                 <div class="details-header-row" style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 40px; gap: 20px;">
                                     <h1 style="margin: 0; font-size: 32px; color: #000; text-align: left;">${car.brand} ${car.model}</h1>
                                     <button class="btn-back" onclick="window.location.href='${homeUrl}'" style="background: #51BBED; color: white; border: none; padding: 10px 24px; border-radius: 20px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;"> < На головну</button>
@@ -221,9 +278,9 @@
                                     <span style="color: #666; font-size: 14px; margin-left: 5px;">· ${car.priceMonth}₴/місяць</span>
                                 </div>
 
-                                <div class="details-actions" style="display: flex; gap: 20px; justify-content: center; width: 100%;">
-                                    <button class="btn-rent-large" onclick="window.location.href='${rentPageUrl}?id=${car.id}'" style="background: #51BBED; color: white; border: none; padding: 0 40px; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; height: 50px; display: flex; align-items: center; justify-content: center;">Орендувати</button>
-                                    <button class="btn-fav-large" onclick="toggleFavDetail('${car.id}', this.querySelector('img'))" style="background: white; border: 1.5px solid #000; padding: 0 25px; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; height: 50px;">
+                                <div class="details-actions" style="display: flex; justify-content: center; width: 100%; gap: 20px;">
+                                    <button class="btn-rent-large" onclick="window.location.href='${rentPageUrl}?id=${car.id}'" style="background: #51BBED; color: white; border: none; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; height: 50px; display: flex; align-items: center; justify-content: center; padding: 0 40px;">Орендувати</button>
+                                    <button class="btn-fav-large" onclick="toggleFavDetail('${car.id}', this.querySelector('img'))" style="background: white; border: 1.5px solid #000; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; height: 50px; padding: 0 25px;">
                                         В обране <img src="${isFav ? 'icons/icon-fav-active.png' : 'icons/icon-fav.png'}" style="width: 24px;">
                                     </button>
                                 </div>
