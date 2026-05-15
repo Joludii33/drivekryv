@@ -1205,4 +1205,35 @@ body, html {
     .order-card { flex-direction: column !important; padding: 15px !important; gap: 15px !important; }
     .order-card > div:first-child { width: 100% !important; height: 200px !important; }
     .order-card > div:last-child { flex-direction: column !important; border-left: none !important; padding-left: 0 !important; border-top: 1px solid #eee; padding-top: 15px; }
+
+    /* 9. Сторінка налаштувань (settings.html) */
+    
+    /* Зменшуємо зовнішні відступи */
+    div[style*="max-width: 900px"] {
+        padding: 15px !important;
+    }
+    
+    /* Робимо білу картку компактнішою (менші відступи та відстань між колонками) */
+    div[style*="gap: 60px"] {
+        padding: 20px !important;
+        gap: 30px !important;
+    }
+    
+    /* Дозволяємо інпутам стискатися під будь-який екран */
+    div[style*="min-width: 300px"] {
+        min-width: 100% !important;
+    }
+    
+    /* Текст рівня ставимо в стовпчик, щоб не наїжджав один на одного */
+    div[style*="margin-bottom: 10px"][style*="font-size: 15px"] {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 5px !important;
+    }
+    
+    /* Кнопка "Видалити акаунт" і червоний текст: ставимо одне під одним */
+    div[style*="align-items: flex-start"][style*="gap: 20px"] {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
 }
