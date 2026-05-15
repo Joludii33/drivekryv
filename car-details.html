@@ -98,14 +98,35 @@
         </main>
     </div>
 
+<div id="custom-alert-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: #fff; padding: 30px; border-radius: 15px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <h2 style="margin: 0 0 15px 0; color: #333; font-size: 22px;">Увага</h2>
+            <p id="custom-alert-text" style="font-size: 16px; line-height: 1.5; margin-bottom: 25px; color: #666; font-weight: normal;"></p>
+            <button onclick="document.getElementById('custom-alert-modal').style.display='none'" style="background: #51BBED; color: white; border: none; padding: 12px 35px; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 16px;">Зрозуміло</button>
+        </div>
+    </div>
+
     <script src="cars.js"></script>
     <script src="main.js"></script> 
 
     <script>
+        // ВИПРАВЛЕНА ФУНКЦІЯ: тепер шукає правильні ID ("custom-alert-modal")
+        window.showLocalAlert = function(message) {
+            const modal = document.getElementById('custom-alert-modal');
+            const text = document.getElementById('custom-alert-text');
+            if (modal && text) {
+                text.innerText = message;
+                modal.style.display = 'flex';
+            } else {
+                alert(message);
+            }
+        };
+
+        // Функція для роботи кнопки "В обране"
         window.toggleFavDetail = function(carId, imgElement) {
             const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
             if (!isLoggedIn) {
-                alert('Щоб додавати авто в обране, будь ласка, увійдіть в акаунт або зареєструйтесь.');
+                window.showLocalAlert('Щоб додавати авто в обране, будь ласка, увійдіть в акаунт або зареєструйтесь.');
                 return;
             }
 
@@ -248,14 +269,14 @@
                     });
 
                 } else {
-                    // ЗВИЧАЙНИЙ РЕЖИМ (Інлайн-стилі перенесені в CSS)
+                    // ЗВИЧАЙНИЙ РЕЖИМ
                     container.innerHTML = `
                         <div class="details-top" style="display: flex; flex-wrap: wrap; margin-bottom: 30px; background: #fff; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); box-sizing: border-box;">
                             
                             <div class="details-gallery" style="flex: 1;">
                                 <div class="main-photo-placeholder" style="width: 100%; aspect-ratio: 4/3; border-radius: 15px; overflow: hidden; position: relative; margin-bottom: 15px; background: #f4f7f6;">
                                     <button onclick="slideImage(-1)" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; color: #333; cursor: pointer; z-index: 10; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: background 0.2s;">❮</button>
-<img id="detail-main-img" src="${window.allCarImages[0]}" alt="${car.model}" style="width: 100%; height: 100%; object-fit: contain; display: block;">                                    <button onclick="slideImage(1)" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; color: #333; cursor: pointer; z-index: 10; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: background 0.2s;">❯</button>
+                                <img id="detail-main-img" src="${window.allCarImages[0]}" alt="${car.model}" style="width: 100%; height: 100%; object-fit: contain; display: block;">                                    <button onclick="slideImage(1)" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; color: #333; cursor: pointer; z-index: 10; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: background 0.2s;">❯</button>
                                 </div>
                                 <div class="thumbnails" style="display: flex; gap: 10px;">${thumbsHTML}</div>
                             </div>
