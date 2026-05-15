@@ -1047,27 +1047,27 @@ body, html {
    ГЛОБАЛЬНА МОБІЛЬНА АДАПТАЦІЯ (Телефони < 768px)
    ======================================================= */
 @media (max-width: 768px) {
-    /* 1. Глобальні налаштування: ВМИКАЄМО СКРОЛ НА ТЕЛЕФОНАХ */
+    /* 1. Глобальні налаштування */
     html, body {
         overflow-x: hidden !important;
-        overflow-y: auto !important; /* Важливо! */
-        height: auto !important;     /* Важливо! */
+        overflow-y: auto !important;
+        height: auto !important;
         width: 100%;
     }
 
     /* 2. Головна сторінка (Каталог та Фільтри) */
     .layout-container { 
         flex-direction: column !important; 
-        padding: 15px !important;
-        height: auto !important; /* Відключаємо фіксовану висоту */
+        padding: 10px !important; 
+        height: auto !important; 
         overflow: visible !important;
     }
     
     .sidebar { 
         width: 100% !important; 
-        height: auto !important; /* Відключаємо висоту 100% */
+        height: auto !important; 
         margin-bottom: 20px !important; 
-        padding: 15px !important;
+        padding: 0 !important; 
         border-right: none !important;
         overflow-y: visible !important;
     }
@@ -1075,88 +1075,134 @@ body, html {
     .content {
         width: 100% !important;
         height: auto !important;
-        padding: 15px !important;
+        padding: 0 !important; 
         overflow-y: visible !important;
     }
 
     #cars-container { 
         display: flex !important; 
         flex-direction: column !important; 
-        gap: 15px !important;
+        gap: 20px !important;
     }
 
     /* 3. Картки авто (в каталозі) */
     .car-card { 
         flex-direction: column !important; 
         height: auto !important; 
+        min-height: auto !important;
     }
-    .car-card img { 
-        height: 200px !important; 
+    
+    .car-card > a > img { 
+        height: 220px !important; 
         width: 100% !important;
+        object-fit: cover !important;
     }
 
-    /* 4. Сторінка деталей авто (car-details.html) та Редагування */
-    #details-container > div {
-        padding: 15px !important;
-        gap: 15px !important;
-        flex-direction: column !important;
+    .car-info {
+        padding: 15px !important; 
     }
-    #details-container > div > div {
-        min-width: 100% !important; 
+
+    .car-header-row {
+        flex-direction: column !important; 
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+    
+    /* РОЗНОСИМО КНОПКУ І СЕРДЕЧКО ПО КРАЯХ */
+    .action-group {
+        width: 100% !important;
+        justify-content: space-between !important;
+        margin-top: 5px !important;
+    }
+
+    /* ЦІНА: робимо красиві відступи */
+    .car-price {
+        margin: 10px 0 15px 0 !important;
+    }
+    
+    .car-specs {
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+    }
+
+    /* 4. Сторінка деталей авто (car-details.html) */
+    .car-details-container {
+        padding: 15px !important; /* Прибираємо величезні відступи по боках */
+        width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+    }
+
+    .details-top {
+        flex-direction: column !important;
+        gap: 20px !important;
+    }
+    
+    /* ВИПРАВЛЯЄМО КАРТИНКУ, ЯКА ВИЛАЗИТЬ ЗА КРАЙ */
+    .details-gallery {
+        width: 100% !important;
         max-width: 100% !important;
+        overflow: hidden !important;
     }
-    #details-container div[style*="grid-template-columns"] {
-        grid-template-columns: 1fr !important; 
+    
+    .main-photo-placeholder { 
+        height: 250px !important; 
+        width: 100% !important;
+        border-radius: 12px !important;
+    }
+    
+    /* Додатковий захист для самої картинки */
+    .main-photo-placeholder img,
+    .details-gallery img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+    }
+
+    .thumbnails {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+    }
+
+    /* Кнопка "Назад" та Заголовок: ставимо кнопку над заголовком */
+    .details-header-row {
+        flex-direction: column-reverse !important; 
+        align-items: flex-start !important;
         gap: 15px !important;
     }
 
-    /* 5. Сторінка оформлення оренди (rent-logged.html) */
-    .rent-columns, .rent-layout-logged, .rent-top-content {
+    .btn-back {
+        align-self: flex-start !important;
+    }
+
+    .specs-grid { 
+        grid-template-columns: 1fr 1fr !important; /* 2 колонки для характеристик */
+        gap: 15px !important;
+    }
+    
+    .spec-item {
+        font-size: 14px !important;
+    }
+
+    /* 5. Сторінка оформлення оренди */
+    .rent-columns, .rent-layout-logged, .rent-top-content, .rent-bottom-row {
         flex-direction: column !important;
         gap: 15px !important;
     }
-    .rent-grid-logged { 
-        grid-template-columns: 1fr !important; 
-    }
-    .grid-card-car, .grid-card-log, .grid-card-conf { 
-        grid-column: 1 !important; 
-        grid-row: auto !important; 
-    }
-    .rent-page-container {
-        padding: 15px !important;
-    }
+    .rent-grid-logged { grid-template-columns: 1fr !important; }
+    .grid-card-car, .grid-card-log, .grid-card-conf { grid-column: 1 !important; grid-row: auto !important; }
+    .rent-page-container { padding: 15px !important; }
 
     /* 6. Модальні вікна */
     #custom-alert-modal > div,
     #custom-confirm-modal > div,
-    #success-modal > div {
-        width: 90% !important;
-        padding: 20px !important;
-    }
+    #success-modal > div { width: 90% !important; padding: 20px !important; }
 
-    /* 7. Шапка (Header) */
-    header { 
-        padding: 15px !important; 
-        flex-wrap: wrap !important;
-        gap: 10px;
-        justify-content: space-between !important;
-    }
+    /* 7. Шапка */
+    header { padding: 15px !important; flex-wrap: wrap !important; gap: 10px; justify-content: space-between !important; }
     
     /* 8. Картки модератора */
-    .order-card {
-        flex-direction: column !important;
-        padding: 15px !important;
-        gap: 15px !important;
-    }
-    .order-card > div:first-child {
-        width: 100% !important;
-        height: 200px !important;
-    }
-    .order-card > div:last-child {
-        flex-direction: column !important;
-        border-left: none !important;
-        padding-left: 0 !important;
-        border-top: 1px solid #eee;
-        padding-top: 15px;
-    }
+    .order-card { flex-direction: column !important; padding: 15px !important; gap: 15px !important; }
+    .order-card > div:first-child { width: 100% !important; height: 200px !important; }
+    .order-card > div:last-child { flex-direction: column !important; border-left: none !important; padding-left: 0 !important; border-top: 1px solid #eee; padding-top: 15px; }
 }
