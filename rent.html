@@ -137,7 +137,7 @@
             window.selectedDates = [...tempSavedDates];
 
             let staticBooked = car.bookedDates || ['2026-05-18', '2026-05-19', '2026-05-25']; 
-            let userBooked = JSON.parse(localStorage.getItem('userBookings') || '[]');
+            let userBooked = JSON.parse(localStorage.getItem(`userBookings_${car.id}`) || '[]');
             let bookedDates = [...staticBooked, ...userBooked];
 
             const monthNames = ["Січ", "Лют", "Бер", "Кві", "Тра", "Чер", "Лип", "Сер", "Вер", "Жов", "Лис", "Гру"];
@@ -267,9 +267,9 @@
                 history.unshift(rentalOrder);
                 localStorage.setItem('history_guest', JSON.stringify(history));
 
-                let globalBookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
-                globalBookings = [...globalBookings, ...window.selectedDates];
-                localStorage.setItem('userBookings', JSON.stringify(globalBookings));
+let globalBookings = JSON.parse(localStorage.getItem(`userBookings_${car.id}`) || '[]');
+globalBookings = [...globalBookings, ...window.selectedDates];
+localStorage.setItem(`userBookings_${car.id}`, JSON.stringify(globalBookings));
 
                 localStorage.removeItem(`temp_rent_dates_${car.id}`);
 

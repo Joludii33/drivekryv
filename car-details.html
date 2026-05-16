@@ -208,7 +208,7 @@
                     window.selectedDates = [];
                     // Статичні дати + ті що людина вже забронювала
                     let staticBooked = car.bookedDates || ['2026-05-18', '2026-05-19', '2026-05-25']; 
-                    let userBooked = JSON.parse(localStorage.getItem('userBookings') || '[]');
+                    let userBooked = JSON.parse(localStorage.getItem(`userBookings_${car.id}`) || '[]');
                     let bookedDates = [...staticBooked, ...userBooked];
 
                     const monthSelector = document.getElementById('month-selector');

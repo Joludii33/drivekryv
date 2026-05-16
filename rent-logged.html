@@ -129,7 +129,7 @@
 
             // Зайняті дати
             let staticBooked = car.bookedDates || ['2026-05-18', '2026-05-19', '2026-05-25']; 
-            let userBooked = JSON.parse(localStorage.getItem('userBookings') || '[]');
+            let userBooked = JSON.parse(localStorage.getItem(`userBookings_${car.id}`) || '[]');
             let bookedDates = [...staticBooked, ...userBooked];
 
             const monthNames = ["Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень", "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"];
@@ -272,9 +272,9 @@
                 localStorage.setItem(`history_${currentUserName}`, JSON.stringify(history));
 
                 // ДОДАЄМО ВІДМІТКИ, ЩО ДНІ ТЕПЕР ЗАЙНЯТІ!
-                let globalBookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
-                globalBookings = [...globalBookings, ...window.selectedDates];
-                localStorage.setItem('userBookings', JSON.stringify(globalBookings));
+let globalBookings = JSON.parse(localStorage.getItem(`userBookings_${car.id}`) || '[]');
+globalBookings = [...globalBookings, ...window.selectedDates];
+localStorage.setItem(`userBookings_${car.id}`, JSON.stringify(globalBookings));
 
                 // Очищаємо тимчасові дані з попередньої сторінки
                 localStorage.removeItem(`temp_rent_dates_${car.id}`);

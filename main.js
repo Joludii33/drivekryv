@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getNextFreeDate(car) {
         let staticBooked = car.bookedDates || ['2026-05-18', '2026-05-19', '2026-05-25']; 
-        let userBooked = JSON.parse(localStorage.getItem('userBookings') || '[]');
+        let userBooked = JSON.parse(localStorage.getItem(`userBookings_${car.id}`) || '[]');
         let allBooked = [...staticBooked, ...userBooked];
 
         let testDate = new Date();
@@ -316,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function isCarAvailableOn(car, targetDateStr) {
         let staticBooked = car.bookedDates || ['2026-05-18', '2026-05-19', '2026-05-25']; 
-        let userBooked = JSON.parse(localStorage.getItem('userBookings') || '[]');
+        let userBooked = JSON.parse(localStorage.getItem(`userBookings_${car.id}`) || '[]');
         let allBooked = [...staticBooked, ...userBooked];
         return !allBooked.includes(targetDateStr);
     }
