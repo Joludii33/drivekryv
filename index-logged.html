@@ -52,11 +52,24 @@
 
     <div class="layout-container">
         <aside class="sidebar">
+            <style>
+                /* СТИСКАЄМО САЙДБАР: Зменшуємо маржини, щоб не було скролу */
+                .sidebar .filter-block { margin-bottom: 15px !important; }
+                .sidebar .filter-label { margin-bottom: 5px !important; font-size: 13px !important; }
+            </style>
+
             <div class="filter-block">
                 <label for="search" class="filter-label">Пошук за назвою:</label>
                 <div class="input-wrapper">
                     <input type="text" id="search" class="search-input" placeholder="">
                     <img src="icons/search-icon.png" alt="Search" class="input-icon">
+                </div>
+            </div>
+
+            <div class="filter-block">
+                <label for="filter-date" class="filter-label">Вільна дата:</label>
+                <div class="input-wrapper">
+                    <input type="date" id="filter-date" class="search-input" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ddd; outline: none; box-sizing: border-box; font-family: inherit; color: #333;">
                 </div>
             </div>
 
@@ -100,7 +113,7 @@
                 </div>
             </div>
 
-            <div id="advanced-filters-block" style="display: none; flex-direction: column; gap: 20px;">
+            <div id="advanced-filters-block" style="display: none; flex-direction: column; gap: 12px;">
                 
                 <div class="filter-block">
                     <label class="filter-label">Кількість місць:</label>
@@ -163,6 +176,16 @@
             </div>
 
         </aside>
+
+        <style>
+    /* Максимально ущільнюємо сайдбар */
+    .sidebar .filter-block { margin-bottom: 12px !important; }
+    .sidebar .filter-label { margin-bottom: 4px !important; font-size: 13px !important; }
+    .sidebar .search-input, .sidebar .price-input { padding: 8px 10px !important; }
+    .sidebar .range-slider-visual { margin: 10px 0 !important; }
+    .sidebar .price-inputs { margin-top: 5px !important; }
+    .sidebar .filter-footer { margin-top: 10px !important; padding-top: 10px !important; }
+</style>
 
         <main class="content">
             

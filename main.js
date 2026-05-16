@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // БЛОК 1: ГЛОБАЛЬНІ ФУНКЦІЇ (Доступні всюди)
     // =========================================================
 
-    // 1.1 КАСТОМНЕ ПОПЕРЕДЖЕННЯ (Модальне вікно)
     function showCustomAlert(message, onCloseCallback = null) {
         let modal = document.getElementById('custom-alert-modal');
         if (!modal) {
@@ -35,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 1.2 КАСТОМНЕ ВІКНО ПІДТВЕРДЖЕННЯ
     function showCustomConfirm(message, onConfirmCallback) {
         let modal = document.getElementById('custom-confirm-modal');
         if (!modal) {
@@ -84,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const userAvatar = localStorage.getItem('userAvatar') || 'icons/avatar.png';
 
-    // Функція діставання лайків саме для ПОТОЧНОГО юзера
     function getFavorites() {
         const name = localStorage.getItem('userName') || 'guest';
         const currentStatus = localStorage.getItem('isLoggedIn') === 'true';
@@ -97,12 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Оновлення аватарок
     document.querySelectorAll('img[src*="avatar.png"], #settings-avatar-preview').forEach(img => {
         img.src = userAvatar;
     });
 
-    // Підставляємо ім'я в класичну шапку
     if (isLoggedIn && savedName) {
         const nameParts = savedName.split(' ');
         const firstName = nameParts[0];
@@ -113,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dropdownUserName) dropdownUserName.innerHTML = `${firstName} <span>${lastName}</span>`;
     }
 
-    // Динамічно додаємо пункт "Заявки клієнтів" в меню, якщо це модератор
     if (isLoggedIn && localStorage.getItem('isModerator') === 'true') {
         const menuList = document.querySelector('.dropdown-menu-list');
         if (menuList && !document.getElementById('mod-confirm-link')) {
@@ -128,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Меню профілю (класичне)
     const profileTrigger = document.getElementById('profile-btn') || document.getElementById('profile-trigger');
     const profileDropdown = document.getElementById('profile-menu') || document.getElementById('profile-dropdown');
     
@@ -144,18 +137,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Вихід
     const btnLogout = document.getElementById('btn-logout');
     if (btnLogout) {
         btnLogout.addEventListener('click', (e) => {
             e.preventDefault();
             localStorage.setItem('isLoggedIn', 'false'); 
-            localStorage.setItem('isModerator', 'false'); // Скидаємо режим модератора при виході
+            localStorage.setItem('isModerator', 'false'); 
             window.location.href = 'index.html'; 
         });
     }
 
-    // Вхід
     const btnLogin = document.getElementById('btn-login');
     if (btnLogin) {
         btnLogin.addEventListener('click', () => {
@@ -173,25 +164,19 @@ document.addEventListener('DOMContentLoaded', () => {
         logoLink.href = isLoggedIn ? "index-logged.html" : "index.html";
     }
 
-    // =========================================================
-    // ЛОГІКА РІВНІВ ТА ЗНИЖОК
-    // =========================================================
-    
     function getUserStats() {
         const name = localStorage.getItem('userName') || 'guest';
         const stats = JSON.parse(localStorage.getItem(`stats_${name}`) || '{"xp": 0, "level": 1, "hasDiscount": false}');
         return stats;
     }
 
-function updateProfileUI() {
+    function updateProfileUI() {
         if (!isLoggedIn) return;
         const stats = getUserStats();
         
-        // Розрахунок потрібної кількості оренд для наступного рівня (2, 3, 4...)
         const xpNeeded = stats.level + 1; 
         const progressPercent = (stats.xp / xpNeeded) * 100;
 
-        // 1. ОНОВЛЕННЯ В МЕНЮ ПРОФІЛЮ
         const levelText = document.getElementById('profile-level-text');
         const xpInfo = document.getElementById('profile-xp-text');
         const progressBar = document.getElementById('profile-progress-bar');
@@ -200,7 +185,6 @@ function updateProfileUI() {
         if (xpInfo) xpInfo.textContent = `Ще ${xpNeeded - stats.xp} оренди до ${stats.level + 1}-го рівня`;
         if (progressBar) progressBar.style.width = `${progressPercent}%`;
 
-        // 2. ОНОВЛЕННЯ НА СТОРІНЦІ НАЛАШТУВАНЬ (settings.html)
         const settingsLevelText = document.getElementById('settings-level-text');
         const settingsXpText = document.getElementById('settings-xp-text');
         const settingsProgressBar = document.getElementById('settings-progress-bar');
@@ -209,7 +193,6 @@ function updateProfileUI() {
         if (settingsXpText) settingsXpText.textContent = `Ще ${xpNeeded - stats.xp} оренди до наступного`;
         if (settingsProgressBar) settingsProgressBar.style.width = `${progressPercent}%`;
 
-        // 3. ВІДОБРАЖЕННЯ БАНЕРА ЗНИЖКИ НА ГОЛОВНІЙ
         const container = document.querySelector('main');
         let discountBanner = document.getElementById('active-discount-banner');
 
@@ -263,7 +246,6 @@ function updateProfileUI() {
         });
     }
 
-    // Збереження даних
     if (saveBtn) {
         saveBtn.addEventListener('click', () => {
             const oldName = localStorage.getItem('userName');
@@ -293,7 +275,6 @@ function updateProfileUI() {
         });
     }
 
-    // Видалення акаунта
     if (deleteBtn) {
         deleteBtn.addEventListener('click', (e) => {
             e.preventDefault(); 
@@ -310,13 +291,42 @@ function updateProfileUI() {
     
     const container = document.getElementById('cars-container');
     
+    // --- Допоміжні функції для дат ---
+    function formatDate(d) {
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function getNextFreeDate(car) {
+        let staticBooked = car.bookedDates || ['2026-05-18', '2026-05-19', '2026-05-25']; 
+        let userBooked = JSON.parse(localStorage.getItem('userBookings') || '[]');
+        let allBooked = [...staticBooked, ...userBooked];
+
+        let testDate = new Date();
+        testDate.setHours(0,0,0,0);
+
+        for (let i = 0; i < 30; i++) { // Шукаємо в межах місяця
+            let dateStr = formatDate(testDate);
+            if (!allBooked.includes(dateStr)) {
+                return `${String(testDate.getDate()).padStart(2, '0')}.${String(testDate.getMonth() + 1).padStart(2, '0')}`;
+            }
+            testDate.setDate(testDate.getDate() + 1);
+        }
+        return "Немає вільних дат";
+    }
+
+    function isCarAvailableOn(car, targetDateStr) {
+        let staticBooked = car.bookedDates || ['2026-05-18', '2026-05-19', '2026-05-25']; 
+        let userBooked = JSON.parse(localStorage.getItem('userBookings') || '[]');
+        let allBooked = [...staticBooked, ...userBooked];
+        return !allBooked.includes(targetDateStr);
+    }
+    
     if (container) {
         if (typeof carsData === 'undefined') {
             container.innerHTML = '<h2 style="padding: 20px; color: red;">Помилка: cars.js не підключено!</h2>';
             return;
         }
 
-        // --- Гібридне завантаження даних ---
         function getFinalCarsData() {
             let baseCars = [...carsData]; 
             let overrides = {};
@@ -337,7 +347,6 @@ function updateProfileUI() {
             return hydratedCars;
         }
 
-        // --- Малювання карток ---
         function renderCars(carsToRender) {
             container.innerHTML = ''; 
             if (carsToRender.length === 0) {
@@ -352,6 +361,7 @@ function updateProfileUI() {
                 const rentUrl = isLoggedIn ? 'rent-logged.html' : 'rent.html';
                 const isFav = favs.includes(car.id); 
                 const isActive = car.isActive !== false; 
+                const nextFreeDate = getNextFreeDate(car); // Отримуємо вільну дату
 
                 const cardStyle = !isActive ? 'filter: grayscale(1) opacity(0.6); position: relative;' : '';
                 const badgeHTML = !isActive ? '<div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:10; background:rgba(0,0,0,0.8); color:white; padding:15px 30px; border-radius:15px; font-weight:700; font-size: 20px;">НЕДОСТУПНО</div>' : '';
@@ -390,7 +400,7 @@ function updateProfileUI() {
                             <div class="car-price">
                                 <span class="price-main">${car.priceDay}₴/день</span>
                                 <span class="price-sub">· ${car.priceMonth}₴/місяць</span>
-                            </div>
+                                <span style="background: rgba(81, 187, 237, 0.1); color: #51BBED; padding: 4px 10px; border-radius: 15px; font-size: 13px; font-weight: bold; margin-left: auto;">Вільна з: ${nextFreeDate}</span>                            </div>
                             <div class="car-specs" style="display: flex; gap: 15px; margin-top: 15px; font-size: 14px; font-weight: 500;">
                                 <div style="display: flex; align-items: center; gap: 6px;">
                                     <img src="icons/icon-gearbox.png" style="width: 20px;"> <span>${car.gearbox}</span>
@@ -411,10 +421,10 @@ function updateProfileUI() {
         }
 
         const searchInput = document.getElementById('search');
+        const dateInput = document.getElementById('filter-date'); // Підключили інпут дати
         const minPriceInput = document.getElementById('min-price');
         const maxPriceInput = document.getElementById('max-price');
 
-        // --- БЕЗПЕЧНА ФУНКЦІЯ ФІЛЬТРАЦІЇ ТА СОРТУВАННЯ ---
         function applyFilters() {
             if (window.location.pathname.includes('favorites.html')) {
                 const favs = getFavorites();
@@ -424,6 +434,7 @@ function updateProfileUI() {
             }
 
             const query = searchInput && searchInput.value ? searchInput.value.toLowerCase().trim() : '';
+            const selectedDate = dateInput && dateInput.value ? dateInput.value : ''; // Забираємо вибрану дату
             const minPrice = minPriceInput && minPriceInput.value ? parseInt(minPriceInput.value) : 0;
             const maxPrice = maxPriceInput && maxPriceInput.value ? parseInt(maxPriceInput.value) : Infinity;
             
@@ -453,6 +464,13 @@ function updateProfileUI() {
 
             let filtered = getFinalCarsData().filter(car => {
                 const matchesSearch = `${car.brand} ${car.model}`.toLowerCase().includes(query);
+                
+                // --- ЛОГІКА ФІЛЬТРАЦІЇ ПО ДАТІ ---
+                let matchesDate = true;
+                if (selectedDate) {
+                    matchesDate = isCarAvailableOn(car, selectedDate);
+                }
+
                 const carPrice = priceMode === 'За місяць' ? car.priceMonth : car.priceDay;
                 const matchesPrice = carPrice >= minPrice && carPrice <= maxPrice;
                 const matchesBody = activeBodyTypes.length === 0 || activeBodyTypes.includes(car.bodyType);
@@ -491,10 +509,9 @@ function updateProfileUI() {
                 const matchesHp = !car.hp || (car.hp >= minHp && car.hp <= maxHp);
                 const matchesYear = !car.year || (car.year >= minYear && car.year <= maxYear);
 
-                return matchesSearch && matchesPrice && matchesBody && matchesGearbox && matchesSeats && matchesDrive && matchesHp && matchesFuel && matchesYear && matchesVol;
+                return matchesSearch && matchesDate && matchesPrice && matchesBody && matchesGearbox && matchesSeats && matchesDrive && matchesHp && matchesFuel && matchesYear && matchesVol;
             });
 
-            // --- ДОДАНО ЛОГІКУ СОРТУВАННЯ ---
             const sortSelect = document.getElementById('sort-select');
             if (sortSelect) {
                 const sortValue = sortSelect.value;
@@ -533,10 +550,10 @@ function updateProfileUI() {
         }
 
         if (searchInput) searchInput.addEventListener('input', applyFilters);
+        if (dateInput) dateInput.addEventListener('change', applyFilters); // Слухач для інпуту дати
         if (minPriceInput) minPriceInput.addEventListener('input', () => { applyFilters(); updateSliderVisuals(); });
         if (maxPriceInput) maxPriceInput.addEventListener('input', () => { applyFilters(); updateSliderVisuals(); });
         
-        // Слухач для випадаючого списку сортування
         const sortSelectEl = document.getElementById('sort-select');
         if (sortSelectEl) sortSelectEl.addEventListener('change', applyFilters);
 
@@ -579,9 +596,7 @@ function updateProfileUI() {
             });
         }
 
-        // ЛОГІКА КЛІКІВ НА КАРТКАХ
         container.addEventListener('click', (e) => {
-            // 1. Логіка Обраного
             if (e.target.classList.contains('fav-btn-toggle')) {
                 const currentStatus = localStorage.getItem('isLoggedIn') === 'true';
                 if (!currentStatus) {
@@ -604,7 +619,6 @@ function updateProfileUI() {
                 }
             }
 
-            // 2. Логіка Модератора: Сховати / Показати авто
             const hideBtn = e.target.closest('.mod-btn-hide');
             if (hideBtn) {
                 const carId = hideBtn.dataset.id;
@@ -621,7 +635,6 @@ function updateProfileUI() {
                 applyFilters();
             }
 
-            // 3. Логіка Модератора: Редагувати авто
             const editBtn = e.target.closest('.mod-btn-edit');
             if (editBtn) {
                 const carId = editBtn.dataset.id;
